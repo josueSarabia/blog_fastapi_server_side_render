@@ -93,4 +93,4 @@ def test_login(client, monkeypatch):
 
     assert response.status_code == status.HTTP_200_OK
 
-    assert response.json() == { "access_token": fake_token, "refresh_token": fake_refresh_token }
+    assert response.json() == None

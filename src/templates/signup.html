@@ -1,0 +1,186 @@
+<html lang="en">
+	<head>
+			<meta charset="UTF-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<link rel="stylesheet" href="{{ url_for('static', path='/css/signup/style.css') }}">
+			<link href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+			<title>Registro</title>
+	</head>
+	<body>
+		<div style="height: 100%; display: flex; justify-content: center; align-items: center; padding: 0 !important;" class="main">
+			<section>
+				<div class="container-signup">
+					<div class="signup-content">
+						<div class="signup-form">
+							<h2 class="form-title">Registro</h2>
+							<form class="register-form needs-validation" id="form" novalidate>
+
+								<label class="mt-2">Email</label>
+								<div class="input-group has-validation">
+									<input type="email" class="form-control" id="username" placeholder="Ingresar Email" required>
+									<div class="invalid-feedback">
+										Ingresar un email valido
+									</div>
+								</div>
+
+								<label class="mt-2">Nombre</label>
+								<div class="input-group has-validation">
+									<input type="text" class="form-control" id="name" placeholder="Ingresar Nombre" required>
+									<div class="invalid-feedback">
+										Ingresar Nombre
+									</div>
+								</div>
+
+								<label class="mt-2">Apellido</label>
+								<div class="input-group has-validation">
+									<input type="text" class="form-control" id="lastName" placeholder="Ingresar Apellido" required>
+									<div class="invalid-feedback">
+										Ingresar apellidos
+									</div>
+								</div>
+
+								<label class="mt-2">Pais</label>
+								<div class="input-group has-validation">
+									<input type="text" class="form-control" id="country" placeholder="Ingresar Pais" required>
+									<div class="invalid-feedback">
+										Ingresar pais
+									</div>
+								</div>
+
+								<label class="mt-2">Edad</label>
+								<div class="input-group has-validation">
+									<input type="number" class="form-control" id="age" placeholder="Ingresar Edad" required>
+									<div class="invalid-feedback">
+										Ingresar Edad
+									</div>
+								</div>
+
+								
+								<label class="mt-2">Contraseña</label>
+								<div class="input-group has-validation">
+									<input type="password" class="form-control" id="password" placeholder="Ingresar Contraseña" required>
+									<div id="errorPasswordMessage" class="invalid-feedback">
+										Ingresar contraseña
+									</div>
+								</div>
+
+								<label class="mt-2">Repetir Contraseña</label>
+								<div class="input-group has-validation">
+									<input type="password" class="form-control" id="rpassword" placeholder="Ingresar Contraseña nuevamente" required>
+									<div id="errorRepeatedPasswordMessage" class="invalid-feedback">
+										Ingresar contraseña nuevamente
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col d-flex justify-content-center">
+										<button type="submit" id="signupbutton" class=" btn btn-primary mt-4">
+											<span id="loadingbutton" class="" ></span>
+											Registrarse
+										</button>
+									</div>
+								</div>
+
+							</form>
+						</div>
+						<div class="signup-image">
+								<figure><img src="{{ url_for('static', path='/images/signup-image.jpg') }}" alt="sing up image"></figure>
+								<a href="/login/" class="signup-image-link">¿Ya tienes una cuenta? Inicia sesión</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		
+	</body>
+	<script>
+		(function () {
+			'use strict'
+
+			var forms = document.querySelectorAll('.needs-validation')
+
+			Array.prototype.slice.call(forms)
+				.forEach(function (form) {
+					form.addEventListener('submit', function (event) {
+						let valid = true
+						if (!form.checkValidity()) {
+							event.preventDefault()
+							event.stopPropagation()
+							form.classList.add('was-validated')
+						} else {
+							form.classList.remove('was-validated')
+							const passwordInput = document.getElementById("password");
+							const rpasswordInput = document.getElementById("rpassword");
+							const passwordValue = passwordInput.value;
+							const rpasswordValue = rpasswordInput.value;
+
+							const errorPasswordMessage = document.getElementById("errorPasswordMessage");
+							const errorRepeatedPasswordMessage = document.getElementById("errorRepeatedPasswordMessage");
+
+							if (passwordValue !== rpasswordValue) {
+								event.preventDefault()
+								event.stopPropagation()
+								valid = false
+								rpasswordInput.classList.add('is-invalid')
+								errorRepeatedPasswordMessage.innerHTML = "Contraseña no es igual"
+							} else {
+								rpasswordInput.classList.remove('is-invalid')
+							}
+							
+							if (passwordValue.length < 8) {
+								event.preventDefault()
+								event.stopPropagation()
+								valid = false
+								passwordInput.classList.add('is-invalid')
+								errorPasswordMessage.innerHTML = "Minimo 8 caracteres"
+							} else {
+								passwordInput.classList.remove('is-invalid')
+							}
+							
+							if (valid) {
+								signup(event)
+							}
+						}
+
+						// form.classList.add('was-validated')
+					}, false)
+				})
+		})()
+
+		function signup(e) {
+			event.preventDefault()
+			const username = document.getElementById("username").value;
+			const password = document.getElementById("password").value;
+			const name = document.getElementById("name").value;
+			const lastName = document.getElementById("lastName").value;
+			const country = document.getElementById("country").value;
+			const age = document.getElementById("age").value;
+
+
+			const loading = document.getElementById("loadingbutton")
+			loading.classList.add("spinner-border")
+			loading.classList.add("spinner-border-sm")
+
+			fetch("http://localhost:8000/signup/", {
+				method: "post",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					email: username,
+					password,
+					name,
+					last_name: lastName,
+					country,
+					age
+				}),
+			}).then((response) => {
+				loading.classList.remove("spinner-border")
+				loading.classList.remove("spinner-border-sm")
+				window.location.replace('/profile/');
+			});
+		}
+
+	</script>
+</html>

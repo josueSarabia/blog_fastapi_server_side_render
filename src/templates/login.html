@@ -1,0 +1,115 @@
+<html lang="en">
+	<head>
+			<meta charset="UTF-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<link href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+			<link href="{{ url_for('static', path='/css/login/main.css') }}" rel="stylesheet">
+			<link href="{{ url_for('static', path='/css/login/util.css') }}" rel="stylesheet">
+			<title>Login</title>
+	</head>
+	<body>
+
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<form id="form" class="login100-form needs-validation" novalidate>
+					<span class="login100-form-title p-b-26">
+						Iniciar Sesión
+					</span>
+
+					<label>Email</label>
+					<div class="input-group has-validation">
+						<input type="email" class="form-control" id="username" placeholder="Ingresar Email" required>
+						<div class="invalid-feedback">
+							Ingresa un email valido
+						</div>
+					</div>
+
+					<label class=" mt-4">Contraseña</label>
+					<div class="input-group has-validation">
+						<input type="password" class="form-control" id="password" placeholder="Ingresar Contraseña" required>
+						<div class="invalid-feedback">
+							Ingresar contraseña
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col d-flex justify-content-center">
+							<button type="submit" id="loginbutton" class=" btn btn-primary mt-4">
+								<span id="loadingbutton" class="" ></span>
+  							Iniciar sesión
+							</button>
+						</div>
+					</div>
+					
+			
+					<div class="text-center p-t-115">
+						<span class="txt1">
+							¿No tienes una cuenta?
+						</span>
+
+						<a class="txt2" href="/signup/">
+							Registrate
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+	<script>
+		// Example starter JavaScript for disabling form submissions if there are invalid fields
+		(function () {
+			'use strict'
+
+			// Fetch all the forms we want to apply custom Bootstrap validation styles to
+			var forms = document.querySelectorAll('.needs-validation')
+
+			// Loop over them and prevent submission
+			Array.prototype.slice.call(forms)
+				.forEach(function (form) {
+					form.addEventListener('submit', function (event) {
+						if (!form.checkValidity()) {
+							event.preventDefault()
+							event.stopPropagation()
+						} else {
+							login(event)
+						}
+
+						form.classList.add('was-validated')
+					}, false)
+				})
+		})()
+
+		function login(e) {
+			event.preventDefault()
+			const username = document.getElementById("username").value;
+  		const password = document.getElementById("password").value;
+
+			const loading = document.getElementById("loadingbutton")
+			loading.classList.add("spinner-border")
+			loading.classList.add("spinner-border-sm")
+
+			const loginbutton = document.getElementById("loginbutton")
+			loginbutton.setAttribute("disabled", "")
+
+			const formData = new FormData()
+			formData.append("username", username)
+      formData.append("password", password)
+
+			fetch("http://localhost:8000/login/", {
+				method: "post",
+				body: formData,
+			}).then((response) => {
+				loading.classList.remove("spinner-border")
+				loading.classList.remove("spinner-border-sm")
+				loginbutton.removeAttribute("disabled")
+				window.location.replace('/profile/');
+			}).catch((error) => {
+				loading.classList.remove("spinner-border")
+				loading.classList.remove("spinner-border-sm")
+				loginbutton.removeAttribute("disabled")
+			});
+		}
+
+	</script>
+</html>

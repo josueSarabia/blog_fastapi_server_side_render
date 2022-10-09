@@ -1,10 +1,11 @@
-from typing import Union, Any
+from fastapi import Cookie
 from datetime import datetime
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from database.querys.user import get_user_by_id
 from database.utils.utils_db import get_db
+from models.exception import RequiresLoginException
 from utils.auth_utils import (
     ALGORITHM,
     JWT_SECRET_KEY
@@ -19,21 +20,41 @@ reuseable_oauth = OAuth2PasswordBearer(
     scheme_name="JWT"
 )
 
-
-async def get_current_user(token: str = Depends(reuseable_oauth), db: Session = Depends(get_db)):
+#this is a param -> token: str = Depends(reuseable_oauth))
+async def get_current_user(access_token: str | None = Cookie(default=None), db: Session = Depends(get_db) ): 
     try:
+        if access_token is None:
+            """ raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            ) """
+            raise RequiresLoginException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         token_data = jwt.decode(
-            token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+            access_token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
         )
-        print(token_data, 'token_datatoken_datatoken_data')
         if datetime.fromtimestamp(token_data.get("exp")) < datetime.now():
-            raise HTTPException(
+            """ raise HTTPException(
+                status_code = status.HTTP_401_UNAUTHORIZED,
+                detail="Token expired",
+                headers={"WWW-Authenticate": "Bearer"},
+            ) """
+            raise RequiresLoginException(
                 status_code = status.HTTP_401_UNAUTHORIZED,
                 detail="Token expired",
                 headers={"WWW-Authenticate": "Bearer"},
             )
     except(jwt.JWTError, ValidationError):
-        raise HTTPException(
+        """ raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) """
+        raise RequiresLoginException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},

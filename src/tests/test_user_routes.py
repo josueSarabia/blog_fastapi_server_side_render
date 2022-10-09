@@ -39,7 +39,7 @@ def client(mock_db, mock_get_current_user):
     app.dependency_overrides[get_current_user] = mock_get_current_user
     return TestClient(app)
 
-testdata_get_user_info = [
+""" testdata_get_user_info = [
     (User(**{
         "email": 'myemail@mine.com',
         "name": "myname",
@@ -66,7 +66,7 @@ def test_get_user_info(input, expected, client, monkeypatch):
 
     if response.status_code == status.HTTP_200_OK:
         input.id = str(input.id)
-        assert response.json() == input.dict()
+        assert response.json() == input.dict() """
 
 def test_update_user_info_does_not_exist(client, monkeypatch):
 
