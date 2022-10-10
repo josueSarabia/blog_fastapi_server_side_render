@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
-from sqlalchemy.orm import validates
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy.orm import validates, relationship
+from sqlalchemy import Column, ForeignKey, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from database.database import Base
 
@@ -11,9 +11,11 @@ class Comment(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
     content = Column(String, nullable=False)
     blog_id = Column(String, nullable=False)
-    user_id = Column(String, nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+
+    user = relationship("User", lazy="joined")
 
     @validates('content')
     def validate_content(self, key, content) -> str:

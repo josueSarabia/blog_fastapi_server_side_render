@@ -1,13 +1,14 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
+from database.models.user import User
 
 from models.comment import CommentCreate, Comment as CommentSchema
 from database.models.comment import Comment as CommentModel
 
 
-def create_comment(db: Session, comment: CommentCreate):
+def create_comment(db: Session, comment: CommentCreate, user: User):
     created_at = datetime.utcnow().isoformat()
-    db_comment = CommentModel(**comment.dict(), created_at=created_at, updated_at=created_at)
+    db_comment = CommentModel(**comment.dict(), user_id=user.id , created_at=created_at, updated_at=created_at)
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)
@@ -39,8 +40,8 @@ def delete_comment(db: Session, comment_id: str):
     return
 
 def get_blog_comments(db: Session, blog_id: str):
-    comments = db.query(CommentModel).filter(CommentModel.blog_id == blog_id).all()
-
+    comments = db.query(CommentModel).filter(CommentModel.blog_id == blog_id).order_by(CommentModel.created_at.asc()).all()
+    
     return comments
 
 

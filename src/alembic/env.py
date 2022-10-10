@@ -32,17 +32,17 @@ target_metadata = Base.metadata
 # ... etc.
 
 def get_url():
-    """ user = os.getenv("POSTGRES_USER")
+    user = os.getenv("POSTGRES_USER")
     password = os.getenv("POSTGRES_PASSWORD")
     host = os.getenv("POSTGRES_HOST")
     port = os.getenv("POSTGRES_PORT")
-    db = os.getenv("POSTGRES_DB") """
+    db = os.getenv("POSTGRES_DB")
 
-    user = os.getenv("TEST_POSTGRES_USER")
+    """ user = os.getenv("TEST_POSTGRES_USER")
     password = os.getenv("TEST_POSTGRES_PASSWORD")
     host = os.getenv("TEST_POSTGRES_HOST")
     port = os.getenv("TEST_POSTGRES_PORT")
-    db = os.getenv("TEST_POSTGRES_DB")
+    db = os.getenv("TEST_POSTGRES_DB") """
     return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
 def run_migrations_offline() -> None:
