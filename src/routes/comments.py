@@ -14,10 +14,16 @@ from fastapi.templating import Jinja2Templates
 templates = Jinja2Templates(directory="templates")
 comments_router = APIRouter()
 
-# se debe eliminar?
+# se debe eliminar? ---> este seria el blog detail
 @comments_router.get("/comment-test/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def comment_test(request: Request):
     return templates.TemplateResponse("comment.html", {"request": request})
+
+# se debe eliminar
+@comments_router.get("/blogs/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
+def blogs_test(request: Request):
+    return templates.TemplateResponse("blogs.html", {"request": request})
+
 
 @comments_router.get("/blogs/{blog_id}/comments/", status_code=status.HTTP_200_OK)
 def get_all_comments(blog_id: str,  db: Session = Depends(get_db), user: User = Depends(get_current_user)):

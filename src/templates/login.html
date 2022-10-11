@@ -17,6 +17,10 @@
 						Iniciar Sesión
 					</span>
 
+					<div id="errorfetch" class="d-none" style="color: crimson;">
+						Email o contraseña invalidos.
+					</div>
+
 					<label>Email</label>
 					<div class="input-group has-validation">
 						<input type="email" class="form-control" id="username" placeholder="Ingresar Email" required>
@@ -55,62 +59,70 @@
 				</form>
 			</div>
 		</div>
+
+		<script>
+			// Example starter JavaScript for disabling form submissions if there are invalid fields
+			(function () {
+				'use strict'
+	
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.querySelectorAll('.needs-validation')
+	
+				// Loop over them and prevent submission
+				Array.prototype.slice.call(forms)
+					.forEach(function (form) {
+						form.addEventListener('submit', function (event) {
+							if (!form.checkValidity()) {
+								event.preventDefault()
+								event.stopPropagation()
+							} else {
+								login(event)
+							}
+	
+							form.classList.add('was-validated')
+						}, false)
+					})
+			})()
+	
+			function login(e) {
+				event.preventDefault()
+				const username = document.getElementById("username").value;
+				const password = document.getElementById("password").value;
+	
+				const loading = document.getElementById("loadingbutton")
+				loading.classList.add("spinner-border")
+				loading.classList.add("spinner-border-sm")
+	
+				const loginbutton = document.getElementById("loginbutton")
+				loginbutton.setAttribute("disabled", "")
+	
+				const formData = new FormData()
+				formData.append("username", username)
+				formData.append("password", password)
+	
+				const errorfetch = document.getElementById("errorfetch");
+				errorfetch.classList.add("d-none")
+	
+				fetch("http://localhost:8000/login/", {
+					method: "post",
+					body: formData,
+				}).then((response) => {
+					loading.classList.remove("spinner-border")
+					loading.classList.remove("spinner-border-sm")
+					loginbutton.removeAttribute("disabled")
+					if (response.status == 200) {
+						window.location.replace('/blogs/');
+					} else {
+						errorfetch.classList.remove("d-none")
+					}
+				}).catch((error) => {
+					loading.classList.remove("spinner-border")
+					loading.classList.remove("spinner-border-sm")
+					loginbutton.removeAttribute("disabled")
+				});
+			}
+	
+		</script>
 	</body>
-	<script>
-		// Example starter JavaScript for disabling form submissions if there are invalid fields
-		(function () {
-			'use strict'
-
-			// Fetch all the forms we want to apply custom Bootstrap validation styles to
-			var forms = document.querySelectorAll('.needs-validation')
-
-			// Loop over them and prevent submission
-			Array.prototype.slice.call(forms)
-				.forEach(function (form) {
-					form.addEventListener('submit', function (event) {
-						if (!form.checkValidity()) {
-							event.preventDefault()
-							event.stopPropagation()
-						} else {
-							login(event)
-						}
-
-						form.classList.add('was-validated')
-					}, false)
-				})
-		})()
-
-		function login(e) {
-			event.preventDefault()
-			const username = document.getElementById("username").value;
-  		const password = document.getElementById("password").value;
-
-			const loading = document.getElementById("loadingbutton")
-			loading.classList.add("spinner-border")
-			loading.classList.add("spinner-border-sm")
-
-			const loginbutton = document.getElementById("loginbutton")
-			loginbutton.setAttribute("disabled", "")
-
-			const formData = new FormData()
-			formData.append("username", username)
-      formData.append("password", password)
-
-			fetch("http://localhost:8000/login/", {
-				method: "post",
-				body: formData,
-			}).then((response) => {
-				loading.classList.remove("spinner-border")
-				loading.classList.remove("spinner-border-sm")
-				loginbutton.removeAttribute("disabled")
-				window.location.replace('/profile/');
-				// window.location.replace('/comment-test/');
-			}).catch((error) => {
-				loading.classList.remove("spinner-border")
-				loading.classList.remove("spinner-border-sm")
-				loginbutton.removeAttribute("disabled")
-			});
-		}
-
-	</script>
+	
 </html>

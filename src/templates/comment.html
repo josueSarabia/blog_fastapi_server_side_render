@@ -1,381 +1,150 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="{{ url_for('static', path='/css/signup/style.css') }}">
-		<link href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
-    <title>Document</title>
-</head>
-<body>
-	<div style="height: 100%; display: flex; justify-content: center; align-items: center; padding: 0 !important;" class="main">
+		<link rel="stylesheet" href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', path='/css/blog/mediumish.css') }}">
+		<title>Blog</title>
+	</head>
 
-		
-		<div class="col">
-			<button type="button" id="addcommentbutton" class="btn btn-primary"> agregar commentario </button>
-			
-			<div class="row d-flex justify-content-center">
-				<div id="commentsCol" class="col-md-12 col-lg-10 col-xl-8">
-
+	<body style="padding: 0; background: #f8f8f8;">
+		<nav class="navbar navbar-expand-lg bg-light bg-white fixed-top">
+			<div class="container-fluid">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link" href="/blogs/">Blogs</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/profile/">Perfil</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" style="cursor: pointer;" id="logoutbutton">Cerrar sesión</a>
+						</li>
+					</ul>
 				</div>
 			</div>
+		</nav>
+		<div class="main" style="margin-top: 55px; height: 100%; display: flex; justify-content: center; align-items: center; padding: 0 !important;" >
+			<div class="col">
+				<div class="container" style="height: 100%;">
+					<div class="row">
+		
+						<div class="col-md-2 col-xs-12">
+							<div class="share">
+								<p>
+									Share
+								</p>
+								<ul>
+									<li>
+										<a target="_blank" href="https://twitter.com/home?status=http%3A//www.wowthemes.net">
+											<svg class="svgIcon-use" width="29" height="29" viewbox="0 0 29 29">
+												<path
+													d="M21.967 11.8c.018 5.93-4.607 11.18-11.177 11.18-2.172 0-4.25-.62-6.047-1.76l-.268.422-.038.5.186.013.168.012c.3.02.44.032.6.046 2.06-.026 3.95-.686 5.49-1.86l1.12-.85-1.4-.048c-1.57-.055-2.92-1.08-3.36-2.51l-.48.146-.05.5c.22.03.48.05.75.08.48-.02.87-.07 1.25-.15l2.33-.49-2.32-.49c-1.68-.35-2.91-1.83-2.91-3.55 0-.05 0-.01-.01.03l-.49-.1-.25.44c.63.36 1.35.57 2.07.58l1.7.04L7.4 13c-.978-.662-1.59-1.79-1.618-3.047a4.08 4.08 0 0 1 .524-1.8l-.825.07a12.188 12.188 0 0 0 8.81 4.515l.59.033-.06-.59v-.02c-.05-.43-.06-.63-.06-.87a3.617 3.617 0 0 1 6.27-2.45l.2.21.28-.06c1.01-.22 1.94-.59 2.73-1.09l-.75-.56c-.1.36-.04.89.12 1.36.23.68.58 1.13 1.17.85l-.21-.45-.42-.27c-.52.8-1.17 1.48-1.92 2L22 11l.016.28c.013.2.014.35 0 .52v.04zm.998.038c.018-.22.017-.417 0-.66l-.498.034.284.41a8.183 8.183 0 0 0 2.2-2.267l.97-1.48-1.6.755c.17-.08.3-.02.34.03a.914.914 0 0 1-.13-.292c-.1-.297-.13-.64-.1-.766l.36-1.254-1.1.695c-.69.438-1.51.764-2.41.963l.48.15a4.574 4.574 0 0 0-3.38-1.484 4.616 4.616 0 0 0-4.61 4.613c0 .29.02.51.08.984l.01.02.5-.06.03-.5c-3.17-.18-6.1-1.7-8.08-4.15l-.48-.56-.36.64c-.39.69-.62 1.48-.65 2.28.04 1.61.81 3.04 2.06 3.88l.3-.92c-.55-.02-1.11-.17-1.6-.45l-.59-.34-.14.67c-.02.08-.02.16 0 .24-.01 2.12 1.55 4.01 3.69 4.46l.1-.49-.1-.49c-.33.07-.67.12-1.03.14-.18-.02-.43-.05-.64-.07l-.76-.09.23.73c.57 1.84 2.29 3.14 4.28 3.21l-.28-.89a8.252 8.252 0 0 1-4.85 1.66c-.12-.01-.26-.02-.56-.05l-.17-.01-.18-.01L2.53 21l1.694 1.07a12.233 12.233 0 0 0 6.58 1.917c7.156 0 12.2-5.73 12.18-12.18l-.002.04z">
+												</path>
+											</svg>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+		
+						<div class="col-md-8 col-md-offset-2 col-xs-12">
+							<div class="mainheading">
+				
+								<h1 class="posttitle">18 Things You Should Learn Before Moving Into a New Home</h1>
+				
+							</div>
+							<div class="article-post">
+								<p>
+									Holy grail funding non-disclosure agreement advisor ramen bootstrapping ecosystem. Beta crowdfunding iteration assets business plan paradigm shift stealth mass market seed money rockstar niche market marketing buzz market.
+								</p>
+								<p>
+									Burn rate release facebook termsheet equity technology. Interaction design rockstar network effects handshake creative startup direct mailing. Technology influencer direct mailing deployment return on investment seed round.
+								</p>
+								<p>
+									Termsheet business model canvas user experience churn rate low hanging fruit backing iteration buyer seed money. Virality release launch party channels validation learning curve paradigm shift hypotheses conversion. Stealth leverage freemium venture startup business-to-business accelerator market.
+								</p>
+								<blockquote>
+									Gen-z strategy long tail churn rate seed money channels user experience incubator startup partner network low hanging fruit direct mailing. Client backing success startup assets responsive web design burn rate A/B testing metrics first mover advantage conversion.
+								</blockquote>
+								<p>
+									Freemium non-disclosure agreement lean startup bootstrapping holy grail ramen MVP iteration accelerator. Strategy market ramen leverage paradigm shift seed round entrepreneur crowdfunding social proof angel investor partner network virality.
+								</p>
+							</div>
+						</div>
+					</div>
 
-			<div id="commentForm" class="row d-flex justify-content-center d-none">
-				<div class="col-md-12 col-lg-10 col-xl-8">
-					<div class="card">
-						<div class="card-body">
-							<div class="d-flex flex-start align-items-center">
-								
-								<div class="card-footer py-3 border-0" style="background-color: #f8f9fa;width: 100%;">
-									<div class="d-flex flex-start w-100">
-										<div class="form-outline w-100">
-											<textarea class="form-control" id="commentTextArea" rows="4"
-												style="background: #fff;" placeholder="Escribe..."></textarea>
+					<div class="row">
+						<div class="col">
+
+							<div class="row d-flex justify-content-center mb-3">
+								<div class="col-md-12 col-lg-10 col-xl-8">
+									<button type="button" id="addcommentbutton" class="btn btn-primary"> agregar commentario </button>
+								</div>
+							</div>
+			
+							<div class="row d-flex justify-content-center">
+								<div id="commentsCol" class="col-md-12 col-lg-10 col-xl-8">
+			
+								</div>
+							</div>
+			
+							<div id="commentForm" class="row d-flex justify-content-center d-none">
+								<div class="col-md-12 col-lg-10 col-xl-8">
+									<div class="card">
+										<div class="card-body">
+											<div class="d-flex flex-start align-items-center">
+			
+												<div class="card-footer py-3 border-0" style="background-color: #f8f9fa;width: 100%;">
+													<div class="d-flex flex-start w-100">
+														<div class="form-outline w-100">
+															<textarea class="form-control" id="commentTextArea" rows="4" style="background: #fff;"
+																placeholder="Escribe..."></textarea>
+														</div>
+													</div>
+													<div class="float-end mt-2 pt-1">
+														<button id="saveCommentButton" type="button" class="btn btn-primary btn-sm">
+															<span id="saveloadingbutton" class=""></span>
+															Guardar
+														</button>
+														<button id="cancelCommentButton" type="button" class="btn btn-outline-primary btn-sm">
+															<span id="cancelloadingbutton" class=""></span>
+															Cancelar
+														</button>
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
-									<div class="float-end mt-2 pt-1">
-										<button id="saveCommentButton" type="button" class="btn btn-primary btn-sm">
-											<span id="saveloadingbutton" class="" ></span>
-											Guardar
-										</button>
-										<button id="cancelCommentButton" type="button" class="btn btn-outline-primary btn-sm">
-											<span id="cancelloadingbutton" class="" ></span>
-											Cancelar
-										</button>
-									</div>
 								</div>
-	
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</body>
-
-<script>
-	var comments_db = []
-
-	function showCommentForm() {
-		const commentForm = document.getElementById("commentForm")
-		commentForm.classList.remove("d-none")
-	}
-
-	function saveComment() {
-		const saveloading = document.getElementById("saveloadingbutton")
-		saveloading.classList.add("spinner-border")
-		saveloading.classList.add("spinner-border-sm")
-
-		const cancelloading = document.getElementById("cancelloadingbutton")
-		cancelloading.classList.add("spinner-border")
-		cancelloading.classList.add("spinner-border-sm")
-
-		const saveCommentButton = document.getElementById("saveCommentButton");
-		const cancelCommentButton = document.getElementById("cancelCommentButton");
-		saveCommentButton.setAttribute("disabled", "")
-		cancelCommentButton.setAttribute("disabled", "")
-
-		const commentTextArea = document.getElementById("commentTextArea");
-		commentTextArea.setAttribute("disabled", "")
-
-		const commentTextAreaValue = commentTextArea.value
-
-		fetch("http://localhost:8000/comments/", {
-			method: "post",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				blog_id: "5ac05386-7b28-416e-a676-cb7742cdcc98",
-				content: commentTextAreaValue
-			}),
-		}).then(async (response) => {
-			let comment = await response.json()
-			addCommentToList(comment)
-			addEventListeners(comment)
-			saveloading.classList.remove("spinner-border")
-			saveloading.classList.remove("spinner-border-sm")
-
-			cancelloading.classList.remove("spinner-border")
-			cancelloading.classList.remove("spinner-border-sm")
-
-			const commentForm = document.getElementById("commentForm")
-			commentForm.classList.add("d-none")
-
-			saveCommentButton.removeAttribute("disabled");
-			cancelCommentButton.removeAttribute("disabled");
-			commentTextArea.removeAttribute("disabled")
-			commentTextArea.value = ""
-			
-		}).catch((error) => {
-			saveloading.classList.remove("spinner-border")
-			saveloading.classList.remove("spinner-border-sm")
-
-			cancelloading.classList.remove("spinner-border")
-			cancelloading.classList.remove("spinner-border-sm")
-
-			saveCommentButton.removeAttribute("disabled");
-			cancelCommentButton.removeAttribute("disabled");
-		});
-		
-	}
-
-	function cancelCommentForm() {
-		const commentForm = document.getElementById("commentForm")
-		commentForm.classList.add("d-none")
-
-		const commentTextArea = document.getElementById("commentTextArea");
-		commentTextArea.value = ""
-	}
-
-	function loadComments() {
-		fetch(`http://localhost:8000/blogs/${'5ac05386-7b28-416e-a676-cb7742cdcc98'}/comments/`, {
-			method: "get",
-		}).then(async (response) => {
-			comments = await response.json()
-			const commentsCol = document.getElementById("commentsCol")
-			comments.forEach(comment => {
-				addCommentToList(comment)
-				addEventListeners()
-			});
-			
-		})
-	}
-
-	function addCommentToList(comment) {
-		comments_db.push(comment)
-		let dateComment = new Date(comment.created_at)
-		let humanRedableDateComment = dateComment.getDate() +"-"+ (dateComment.getMonth()+1) +"-"+ dateComment.getFullYear()
-		let timezoneInHours = dateComment.getTimezoneOffset() / 60
-		let humanRedableHoursComment = Math.abs(dateComment.getHours() - timezoneInHours) +":"+( dateComment.getMinutes() < 10 ? "0" : "" ) + dateComment.getMinutes()
-		let fullDate = humanRedableDateComment + " " + humanRedableHoursComment
-
-		commentsCol.innerHTML += `
-			<div id="${comment.id}" class="card">
-				<div class="card-body">
-
-					<div class="d-flex flex-start align-items-center">
-						<!-- <img class="rounded-circle shadow-1-strong me-3"
-							src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"
-							height="60" /> -->
-						<div>
-							<h6 class="fw-bold text-primary mb-1">${comment.user.name + " " + comment.user.last_name}</h6>
-							<p class="text-muted small mb-0">
-								${fullDate}
-							</p>
-						</div>
-						<div style="margin-left: 10px;">
-							<button type="button" id="editCommentButton${comment.id}" class="btn btn-primary">
-								<span id="editloadingbutton${comment.id}" class="" ></span>
-								Editar
-							</button>
-							<button type="button" id="deleteCommentButton${comment.id}" class="btn btn-danger">
-								<span id="deleteloadingbutton${comment.id}" class="" ></span>
-								Eliminar
-							</button>
-						</div>
-					</div>
-					<p id="content${comment.id}" class="mt-3 mb-4 pb-2">
-						${comment.content}
-					</p>
-
-					<div id="divCommentTextAreaEdit${comment.id}" class="d-flex flex-start w-100 d-none">
-						<div class="form-outline w-100">
-							<textarea class="form-control" id="commentTextAreaEdit${comment.id}" rows="4"
-								style="background: #fff;" placeholder="Escribe..."></textarea>
-						</div>
-					</div>
-
-					<div id="rowEditFormButtons${comment.id}" class="float-end mt-2 pt-1 d-none">
-						<button id="editSaveCommentButton${comment.id}" type="button" class="btn btn-primary btn-sm">
-							<span id="editsaveloadingbutton${comment.id}" class="" ></span>
-							Guardar
-						</button>
-						<button id="editCancelCommentButton${comment.id}" type="button" class="btn btn-outline-primary btn-sm">
-							<span id="editcancelloadingbutton${comment.id}" class="" ></span>
-							Cancelar
-						</button>
-					</div>
-				</div>	
-			</div>
-		`
-	}
-
-	function showEditCommentForm(event) {
-		const commentElement = event.target
-		const commentId = event.target.id.replace("editCommentButton", "")
-
-		const editCommentButton = document.getElementById("editCommentButton" + commentId);
-		const deleteCommentButton = document.getElementById("deleteCommentButton" + commentId);
-		editCommentButton.classList.add("d-none")
-		deleteCommentButton.classList.add("d-none")
-
-		const content = document.getElementById("content" + commentId);
-		content.classList.add("d-none")
-
-		const divCommentTextAreaEdit = document.getElementById("divCommentTextAreaEdit" + commentId);
-		divCommentTextAreaEdit.classList.remove("d-none")
-
-		const commentTextAreaEdit = document.getElementById("commentTextAreaEdit" + commentId);
-		commentTextAreaEdit.value = content.innerText.trim()
-
-		const rowEditFormButtons = document.getElementById("rowEditFormButtons" + commentId);
-		rowEditFormButtons.classList.remove("d-none")
-	}
-
-	function saveEditComment(event) {
-		const commentElement = event.target
-		const commentId = event.target.id.replace("editSaveCommentButton", "")
-
-		const editsaveloadingbutton = document.getElementById("editsaveloadingbutton" + commentId)
-		editsaveloadingbutton.classList.add("spinner-border")
-		editsaveloadingbutton.classList.add("spinner-border-sm")
-
-		const editcancelloadingbutton = document.getElementById("editcancelloadingbutton" + commentId)
-		editcancelloadingbutton.classList.add("spinner-border")
-		editcancelloadingbutton.classList.add("spinner-border-sm")
-
-		const editSaveCommentButton = document.getElementById("editSaveCommentButton" + commentId);
-		const editCancelCommentButton = document.getElementById("editCancelCommentButton" + commentId);
-		editSaveCommentButton.setAttribute("disabled", "")
-		editCancelCommentButton.setAttribute("disabled", "")
-
-		const commentTextAreaEdit = document.getElementById("commentTextAreaEdit" + commentId);
-		commentTextAreaEdit.setAttribute("disabled", "")
-
-		const commentTextAreaEditValue = commentTextAreaEdit.value
-
-		updatedComment = comments_db.filter(el =>el.id == commentId)[0]
-		updatedComment.content = commentTextAreaEditValue
-
-
-		fetch("http://localhost:8000/comments/", {
-			method: "put",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({...updatedComment}),
-		}).then(async (response) => {
-			editsaveloadingbutton.classList.remove("spinner-border")
-			editsaveloadingbutton.classList.remove("spinner-border-sm")
-			editcancelloadingbutton.classList.remove("spinner-border")
-			editcancelloadingbutton.classList.remove("spinner-border-sm")
-			editSaveCommentButton.removeAttribute("disabled")
-			editCancelCommentButton.removeAttribute("disabled")
-			commentTextAreaEdit.removeAttribute("disabled")
-
-			const editCommentButton = document.getElementById("editCommentButton" + commentId);
-			const deleteCommentButton = document.getElementById("deleteCommentButton" + commentId);
-			editCommentButton.classList.remove("d-none")
-			deleteCommentButton.classList.remove("d-none")
-
-			const content = document.getElementById("content" + commentId);
-			content.innerText = commentTextAreaEdit.value.trim()
-			content.classList.remove("d-none")
-
-			const divCommentTextAreaEdit = document.getElementById("divCommentTextAreaEdit" + commentId);
-			divCommentTextAreaEdit.classList.add("d-none")
-
-			const rowEditFormButtons = document.getElementById("rowEditFormButtons" + commentId);
-			rowEditFormButtons.classList.add("d-none")
-
-		})
-	}
-
-	function cancelEditComment(event) {
-		const commentElement = event.target
-		const commentId = event.target.id.replace("editCancelCommentButton", "")
-
-		const editCommentButton = document.getElementById("editCommentButton" + commentId);
-		const deleteCommentButton = document.getElementById("deleteCommentButton" + commentId);
-		editCommentButton.classList.remove("d-none")
-		deleteCommentButton.classList.remove("d-none")
-
-		const content = document.getElementById("content" + commentId);
-		content.classList.remove("d-none")
-
-		const divCommentTextAreaEdit = document.getElementById("divCommentTextAreaEdit" + commentId);
-		divCommentTextAreaEdit.classList.add("d-none")
-
-		const commentTextAreaEdit = document.getElementById("commentTextAreaEdit" + commentId);
-		commentTextAreaEdit.value = content.innerText.trim()
-
-
-		const rowEditFormButtons = document.getElementById("rowEditFormButtons" + commentId);
-		rowEditFormButtons.classList.add("d-none")
-	}
-
-	function deleteComment(event) {
-		const commentElement = event.target
-		const commentId = event.target.id.replace("deleteCommentButton", "")
-
-		const editloadingbutton = document.getElementById("editloadingbutton" + commentId)
-		editloadingbutton.classList.add("spinner-border")
-		editloadingbutton.classList.add("spinner-border-sm")
-
-		const deleteloadingbutton = document.getElementById("deleteloadingbutton" + commentId)
-		deleteloadingbutton.classList.add("spinner-border")
-		deleteloadingbutton.classList.add("spinner-border-sm")
-
-		const editCommentButton = document.getElementById("editCommentButton" + commentId);
-		const deleteCommentButton = document.getElementById("deleteCommentButton" + commentId);
-		editCommentButton.setAttribute("disabled", "")
-		deleteCommentButton.setAttribute("disabled", "")
-
-		fetch("http://localhost:8000/comments/"+commentId, {
-			method: "delete",
-		}).then(async (response) => {
-			const commentsList = document.getElementById("commentsCol");
-			const commentElement = document.getElementById(commentId);
-			commentsList.removeChild(commentElement)
-		})
-
-	}
-
-	function addEventListeners() {
-		comments_db.forEach(el => {
-			const editCommentButton = document.getElementById("editCommentButton" + el.id)
-			editCommentButton.addEventListener('click', function (event) {
-				showEditCommentForm(event)
-			}, false)
-
-			const editSaveCommentButton = document.getElementById("editSaveCommentButton" + el.id)
-			editSaveCommentButton.addEventListener('click', function (event) {
-				saveEditComment(event)
-			}, false)
-
-			const editCancelCommentButton = document.getElementById("editCancelCommentButton" + el.id)
-			editCancelCommentButton.addEventListener('click', function () {
-				cancelEditComment(event)
-			}, false)
-
-			const deleteCommentButton = document.getElementById("deleteCommentButton" + el.id)
-			deleteCommentButton.addEventListener('click', function () {
-				deleteComment(event)
-			}, false)
-		})
-	}
-
-	window.onload = function () {
-		const addcommentbutton = document.getElementById("addcommentbutton")
-		addcommentbutton.addEventListener('click', function () {
-			showCommentForm()
-		}, false)
-
-		const saveCommentButton = document.getElementById("saveCommentButton")
-		saveCommentButton.addEventListener('click', function () {
-			saveComment()
-		}, false)
-
-		const cancelCommentButton = document.getElementById("cancelCommentButton")
-		cancelCommentButton.addEventListener('click', function () {
-			cancelCommentForm()
-		}, false)
-
-		loadComments()
-
-	}
-
-</script>
-
+	
+		<script src="{{ url_for('static', path='/js/bootstrap/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', path='/js/comment.js') }}"></script>
+		<script src="{{ url_for('static', path='/js/logout.js') }}"></script>
+		<script>
+			window.onload = function () {
+				const btnLogout = document.getElementById("logoutbutton");
+				btnLogout.addEventListener('click', function (event) {
+					logout()
+				}, false)
+
+				load()
+			}
+		</script>
+	
+	</body>
+
+	
 </html>

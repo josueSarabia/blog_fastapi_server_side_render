@@ -23,7 +23,18 @@ async def get_user_info(request: Request, db: Session = Depends(get_db), user: U
 
     user.id = str(user.id)
     return templates.TemplateResponse("profile.html", {"request": request, "data": user})
-    
+
+@users_router.get('/users/info/', status_code=status.HTTP_200_OK, response_model=User)
+async def get_user_info_json(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    user_db = get_user_by_id(db, user.id)
+    if user_db is None:
+        raise HTTPException(
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail="User does not exists"
+        )
+
+    user.id = str(user.id)
+    return user
 
 @users_router.put('/users/', status_code=status.HTTP_200_OK, response_model=User)
 async def update_user_info(updated_user: User, user: User = Depends(get_current_user),  db: Session = Depends(get_db)):

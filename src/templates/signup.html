@@ -16,6 +16,10 @@
 							<h2 class="form-title">Registro</h2>
 							<form class="register-form needs-validation" id="form" novalidate>
 
+								<div id="errorfetch" class="d-none" style="color: crimson;">
+									Email ya se encuentra registrado.
+								</div>
+
 								<label class="mt-2">Email</label>
 								<div class="input-group has-validation">
 									<input type="email" class="form-control" id="username" placeholder="Ingresar Email" required>
@@ -93,94 +97,103 @@
 			</section>
 		</div>
 		
+
+		<script>
+			(function () {
+				'use strict'
+	
+				var forms = document.querySelectorAll('.needs-validation')
+	
+				Array.prototype.slice.call(forms)
+					.forEach(function (form) {
+						form.addEventListener('submit', function (event) {
+							let valid = true
+							if (!form.checkValidity()) {
+								event.preventDefault()
+								event.stopPropagation()
+								form.classList.add('was-validated')
+							} else {
+								form.classList.remove('was-validated')
+								const passwordInput = document.getElementById("password");
+								const rpasswordInput = document.getElementById("rpassword");
+								const passwordValue = passwordInput.value;
+								const rpasswordValue = rpasswordInput.value;
+	
+								const errorPasswordMessage = document.getElementById("errorPasswordMessage");
+								const errorRepeatedPasswordMessage = document.getElementById("errorRepeatedPasswordMessage");
+	
+								if (passwordValue !== rpasswordValue) {
+									event.preventDefault()
+									event.stopPropagation()
+									valid = false
+									rpasswordInput.classList.add('is-invalid')
+									errorRepeatedPasswordMessage.innerHTML = "Contraseña no es igual"
+								} else {
+									rpasswordInput.classList.remove('is-invalid')
+								}
+								
+								if (passwordValue.length < 8) {
+									event.preventDefault()
+									event.stopPropagation()
+									valid = false
+									passwordInput.classList.add('is-invalid')
+									errorPasswordMessage.innerHTML = "Minimo 8 caracteres"
+								} else {
+									passwordInput.classList.remove('is-invalid')
+								}
+								
+								if (valid) {
+									signup(event)
+								}
+							}
+	
+							// form.classList.add('was-validated')
+						}, false)
+					})
+			})()
+	
+			function signup(e) {
+				event.preventDefault()
+				const username = document.getElementById("username").value;
+				const password = document.getElementById("password").value;
+				const name = document.getElementById("name").value;
+				const lastName = document.getElementById("lastName").value;
+				const country = document.getElementById("country").value;
+				const age = document.getElementById("age").value;
+	
+	
+				const loading = document.getElementById("loadingbutton")
+				loading.classList.add("spinner-border")
+				loading.classList.add("spinner-border-sm")
+	
+				const errorfetch = document.getElementById("errorfetch");
+				errorfetch.classList.add("d-none")
+	
+				fetch("http://localhost:8000/signup/", {
+					method: "post",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({
+						email: username,
+						password,
+						name,
+						last_name: lastName,
+						country,
+						age
+					}),
+				}).then((response) => {
+					loading.classList.remove("spinner-border")
+					loading.classList.remove("spinner-border-sm")
+					if (response.status == 200) {
+						window.location.replace('/blogs/');
+					} else {
+						errorfetch.classList.remove("d-none")
+					}
+				});
+			}
+	
+		</script>
 	</body>
-	<script>
-		(function () {
-			'use strict'
-
-			var forms = document.querySelectorAll('.needs-validation')
-
-			Array.prototype.slice.call(forms)
-				.forEach(function (form) {
-					form.addEventListener('submit', function (event) {
-						let valid = true
-						if (!form.checkValidity()) {
-							event.preventDefault()
-							event.stopPropagation()
-							form.classList.add('was-validated')
-						} else {
-							form.classList.remove('was-validated')
-							const passwordInput = document.getElementById("password");
-							const rpasswordInput = document.getElementById("rpassword");
-							const passwordValue = passwordInput.value;
-							const rpasswordValue = rpasswordInput.value;
-
-							const errorPasswordMessage = document.getElementById("errorPasswordMessage");
-							const errorRepeatedPasswordMessage = document.getElementById("errorRepeatedPasswordMessage");
-
-							if (passwordValue !== rpasswordValue) {
-								event.preventDefault()
-								event.stopPropagation()
-								valid = false
-								rpasswordInput.classList.add('is-invalid')
-								errorRepeatedPasswordMessage.innerHTML = "Contraseña no es igual"
-							} else {
-								rpasswordInput.classList.remove('is-invalid')
-							}
-							
-							if (passwordValue.length < 8) {
-								event.preventDefault()
-								event.stopPropagation()
-								valid = false
-								passwordInput.classList.add('is-invalid')
-								errorPasswordMessage.innerHTML = "Minimo 8 caracteres"
-							} else {
-								passwordInput.classList.remove('is-invalid')
-							}
-							
-							if (valid) {
-								signup(event)
-							}
-						}
-
-						// form.classList.add('was-validated')
-					}, false)
-				})
-		})()
-
-		function signup(e) {
-			event.preventDefault()
-			const username = document.getElementById("username").value;
-			const password = document.getElementById("password").value;
-			const name = document.getElementById("name").value;
-			const lastName = document.getElementById("lastName").value;
-			const country = document.getElementById("country").value;
-			const age = document.getElementById("age").value;
-
-
-			const loading = document.getElementById("loadingbutton")
-			loading.classList.add("spinner-border")
-			loading.classList.add("spinner-border-sm")
-
-			fetch("http://localhost:8000/signup/", {
-				method: "post",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
-					email: username,
-					password,
-					name,
-					last_name: lastName,
-					country,
-					age
-				}),
-			}).then((response) => {
-				loading.classList.remove("spinner-border")
-				loading.classList.remove("spinner-border-sm")
-				window.location.replace('/profile/');
-			});
-		}
-
-	</script>
+	
 </html>
