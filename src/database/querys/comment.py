@@ -15,11 +15,6 @@ def create_comment(db: Session, comment: CommentCreate, user: User):
 
     return db_comment
 
-# ELIMNAR ESTO YA DEBERIA EXISTIR
-def get_blog(db: Session, blog_id: str):
-    # db.query(blog.Blog).filter(blog.Blog.blog_id == blog_id).first()
-    return True
-
 def get_comment(db: Session, comment_id: str):
     comment = db.query(CommentModel).filter(CommentModel.id == comment_id).first()
     return comment

@@ -1,0 +1,174 @@
+<html lang="en">
+	<head>
+			<meta charset="UTF-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<link rel="stylesheet" href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}">
+			<link href="{{ url_for('static', path='/css/blog/mediumish.css') }}" rel="stylesheet" >
+			<title>Mis Blogs</title>
+	</head>
+	<body style="background: #f8f8f8;">
+		<nav class="navbar navbar-expand-lg bg-light bg-white fixed-top">
+			<div class="container-fluid">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link" href="/blogs/">Blogs</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/profile/">Perfil</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" style="cursor: pointer;" id="logoutbutton">Cerrar sesión</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<section class="recent-posts">
+				<div class="section-title">
+					<h2>
+						<span>Mis blogs</span>
+						<button id="createBlogButton" style="margin-left: 5px;" class="btn btn-primary"> crear blog</button>
+					</h2>
+					
+				</div>
+				
+				<div style="column-count: 3; column-gap: 1.25rem;" class="card-columns listrecent">
+					
+					{% for blog in data.blogs %}
+					<div class="card" style="display: inline-block; width: 100%;">
+						<a href="/blogs/detail/{{blog.blog_id|safe}}/">
+							<img class="img-fluid" src="{{ url_for('static', path='/images/5.webp') }}" alt="">
+						</a>
+						<div class="card-block" style=" flex: 1 1 auto; padding: 1.25rem;">
+							<h2 class="card-title">
+								<a style="text-decoration: none;" href="/blogs/detail/{{blog.blog_id|safe}}/">{{ blog.blog.title }}</a>
+							</h2>
+							{% if blog.user_id != blog.blog.user_id %}
+							<h5 style="font-size: 12px;">Compartido por ti</h5>
+							{% else %}
+							<h5 style="font-size: 12px;color: #fff;">Autor</h5>
+							{% endif %}
+							<!-- <h4 class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</h4> -->
+							<div class="metafooter">
+								<div class="wrapfooter">
+									<span class="author-meta">
+										<span class="post-name">
+											<a>{{"autor: " + blog.blog.user.name + " " + blog.blog.user.last_name}}</a>
+										</span>
+										<br/>
+										<span class="post-date">{{blog.blog.updated_at}}</span>
+									</span>
+
+									{% if blog.user_id == blog.blog.user_id %}
+									<button id='updateBlog{{blog.blog_id|safe}}' type="button" class="btn btn-primary btn-sm update-blog-button" style="margin-left: 5px;">
+										<span id='updateloadingbutton{{blog.blog_id|safe}}' class="" ></span>
+										Editar
+									</button>
+									{% endif %}
+
+									<button id='deleteBlog{{blog.blog_id|safe}}' type="button" class="btn btn-danger btn-sm delete-blog-button" style="margin-left: 5px;">
+										<span id='deleteloadingbutton{{blog.blog_id|safe}}' class="" ></span>
+										Eliminar
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</section>
+		</div>
+
+
+		<script src="{{ url_for('static', path='/js/logout.js') }}"></script>
+		<script>
+			function deleteBlog(event) {
+				event.preventDefault()
+				let targetBlog = event.target
+				let blogId = targetBlog.id.replace("deleteBlog", "").replaceAll('"', '')
+				const deleteloadingbutton = document.getElementById('deleteloadingbutton' + blogId);
+				const updateBlogbutton = document.getElementById('updateBlog' + blogId);
+				const updateloadingbutton = document.getElementById('updateloadingbutton' + blogId);
+
+				const blogs = JSON.parse('{{data.blogs}}'.replaceAll("&#39;", '"'))
+
+
+				if (updateBlogbutton && updateloadingbutton) {
+					
+					updateloadingbutton.classList.add("spinner-border")
+					updateloadingbutton.classList.add("spinner-border-sm")
+					updateBlogbutton.setAttribute("disabled", "")
+				}
+				
+				
+				deleteloadingbutton.classList.add("spinner-border")
+				deleteloadingbutton.classList.add("spinner-border-sm")
+				
+				targetBlog.setAttribute("disabled", "")
+				
+				
+				
+				fetch("http://localhost:8000/blogs/"+blogId+"/", {
+					method: "delete",
+				}).then((response) => {
+					deleteloadingbutton.classList.remove("spinner-border")
+					deleteloadingbutton.classList.remove("spinner-border-sm")
+					if (updateBlogbutton && updateloadingbutton) {
+						updateloadingbutton.classList.remove("spinner-border")
+						updateloadingbutton.classList.remove("spinner-border-sm")
+						updateBlogbutton.removeAttribute("disabled")
+					}
+
+					targetBlog.removeAttribute("disabled")					
+
+					if (response.status == 204) {
+						window.location.reload();
+					}
+				});
+			}
+
+			function addEventListeners() {
+				const blogs = JSON.parse('{{data.blogs}}'.replaceAll("&#39;", '"'))
+				blogs.forEach(blog => {
+					const deleteBlogButton = document.getElementById('deleteBlog' + blog.blog_id);
+					deleteBlogButton.addEventListener('click', function (event) {
+						deleteBlog(event)
+					}, false)
+
+					if (blog.user_id == blog.blog.user_id) {
+						const updateBlogButton = document.getElementById('updateBlog' + blog.blog_id);
+						updateBlogButton.addEventListener('click', function (event) {
+							event.preventDefault()
+							let targetBlog = event.target
+							let blogId = targetBlog.id.replace("updateBlog", "").replaceAll('"', '')
+							window.location.href = "/update-blog/" + blogId + "/"
+						}, false)
+					}
+				});
+			}
+
+			window.onload = function () {
+				const btnLogout = document.getElementById("logoutbutton");
+				btnLogout.addEventListener('click', function (event) {
+					logout()
+				}, false)
+
+				const createBlogButton = document.getElementById("createBlogButton");
+				createBlogButton.addEventListener('click', function (event) {
+					window.location.href = "/create-blog/"
+				}, false)
+
+				addEventListeners()
+			}
+
+		</script>
+	</body>
+	
+</html>

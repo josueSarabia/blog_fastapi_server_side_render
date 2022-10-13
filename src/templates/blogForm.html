@@ -1,0 +1,179 @@
+<html lang="en">
+	<head>
+			<meta charset="UTF-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<link rel="stylesheet" href="{{ url_for('static', path='/css/signup/style.css') }}">
+			<link href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+			<title>Formulario</title>
+	</head>
+	<body>
+		<div style="height: 100%; display: flex; justify-content: center; align-items: center; padding: 0 !important;" class="main">
+			<section>
+				<div class="container-signup" style="height: 80vh;">
+					<div class="signup-content">
+						<div class="signup-form" style="width: 100% !important;">
+							{% if data.type == "create" %}
+							<h2 class="text-center form-title"> Crear blog</h2>
+							{% else %}
+							<h2 class="text-center form-title"> Editar blog</h2>
+							{% endif %}
+							<form class="register-form needs-validation" id="form" novalidate>
+
+								<label class="mt-2">Titulo</label>
+								<div class="input-group has-validation">
+									<input type="text" class="form-control" id="title" placeholder="Ingresar Titulo" required>
+									<div class="invalid-feedback">
+										Ingresar un titulo
+									</div>
+								</div>
+
+								<label class="mt-2">Contenido</label>
+								<div class="input-group has-validation" style="height: 40vh;">
+									<textarea style="resize: none;height: 100%;" class="form-control" id="content" placeholder="Ingresar Contenido" required></textarea>
+									<div class="invalid-feedback">
+										Ingresar Contenido
+									</div>
+								</div>
+
+								
+								<div class="row">
+									<div class="col d-flex justify-content-center">
+										<button type="submit" id="save" class=" btn btn-primary mt-4">
+											<span id="saveloadingbutton" class="" ></span>
+											Guardar
+										</button>
+										<button type="button" id="cancel" style="margin-left: 5px;" class=" btn btn-primary mt-4">
+											<span id="cancelloadingbutton" class="" ></span>
+											Cancelar
+										</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		
+
+		<script>
+			window.onload = function () {
+				const title = document.getElementById("title");
+				const content = document.getElementById("content");
+				const cancelbutton = document.getElementById("cancel");
+				cancelbutton.addEventListener("click", function (event) {
+					window.location.replace('/user/blogs/');
+				}, false)
+				const blogContent = '{{ data.content|tojson|safe }}';
+				const blogTitle = '{{ data.title|tojson|safe }}';
+
+				if (blogContent && blogTitle) {
+					title.value = blogTitle.replaceAll('"','');
+					content.value = blogContent.substring(1, blogContent.length - 1);
+				}
+
+				
+				(function () {
+					'use strict'
+		
+					var forms = document.querySelectorAll('.needs-validation')
+		
+					Array.prototype.slice.call(forms)
+						.forEach(function (form) {
+							form.addEventListener('submit', function (event) {
+								if (!form.checkValidity()) {
+									event.preventDefault()
+									event.stopPropagation()
+								} else {
+									createUpdateBlog(event)
+								}
+		
+								form.classList.add('was-validated')
+							}, false)
+						})
+				})()
+			}
+
+			function createUpdateBlog(event) {
+				event.preventDefault()
+				const title = document.getElementById("title");
+				const content = document.getElementById("content");
+
+				const titleValue = title.value
+				const contentValue = content.value
+
+				const saveloading = document.getElementById("saveloadingbutton")
+				saveloading.classList.add("spinner-border")
+				saveloading.classList.add("spinner-border-sm")
+
+				const cancelloading = document.getElementById("cancelloadingbutton")
+				cancelloading.classList.add("spinner-border")
+				cancelloading.classList.add("spinner-border-sm")
+
+				const savebutton = document.getElementById("save")
+				const cancelbutton = document.getElementById("cancel")
+
+				title.setAttribute("disabled", "")
+				content.setAttribute("disabled", "")
+				savebutton.setAttribute("disabled", "")
+				cancelbutton.setAttribute("disabled", "")
+
+
+				let type = '{{data.type|tojson|safe}}'.replaceAll('"', '')
+
+				if (type === "update") {
+					let id = window.location.href.split("/")[4]
+					fetch("http://localhost:8000/blogs/", {
+						method: "put",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							id: id,
+							title: titleValue,
+							content: contentValue,
+						}),
+					}).then((response) => {
+						saveloading.classList.remove("spinner-border")
+						saveloading.classList.remove("spinner-border-sm")
+						cancelloading.classList.remove("spinner-border")
+						cancelloading.classList.remove("spinner-border-sm")
+						title.removeAttribute("disabled")
+						content.removeAttribute("disabled")
+						savebutton.removeAttribute("disabled")
+						cancelbutton.removeAttribute("disabled")
+						if (response.status == 200) {
+							window.location.replace('/user/blogs/');
+						}
+					});
+				} else {
+					fetch("http://localhost:8000/blogs/", {
+						method: "post",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							title: titleValue,
+							content: contentValue,
+						}),
+					}).then((response) => {
+						saveloading.classList.remove("spinner-border")
+						saveloading.classList.remove("spinner-border-sm")
+						cancelloading.classList.remove("spinner-border")
+						cancelloading.classList.remove("spinner-border-sm")
+						title.removeAttribute("disabled")
+						content.removeAttribute("disabled")
+						savebutton.removeAttribute("disabled")
+						cancelbutton.removeAttribute("disabled")
+						if (response.status == 201) {
+							window.location.replace('/user/blogs/');
+						}
+					});
+				}
+			}
+	
+		</script>
+	</body>
+	
+</html>

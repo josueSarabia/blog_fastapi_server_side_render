@@ -1,5 +1,6 @@
 var comments_db = []
 var user_db = {}
+var blogId = ""
 
 	function showCommentForm() {
 		const commentForm = document.getElementById("commentForm")
@@ -31,7 +32,7 @@ var user_db = {}
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				blog_id: "5ac05386-7b28-416e-a676-cb7742cdcc98",
+				blog_id: blogId,
 				content: commentTextAreaValue
 			}),
 		}).then(async (response) => {
@@ -74,7 +75,7 @@ var user_db = {}
 	}
 
 	function loadComments() {
-		fetch(`http://localhost:8000/blogs/${'5ac05386-7b28-416e-a676-cb7742cdcc98'}/comments/`, {
+		fetch(`http://localhost:8000/blogs/${blogId}/comments/`, {
 			method: "get",
 		}).then(async (response) => {
 			comments = await response.json()
@@ -324,7 +325,7 @@ var user_db = {}
 		})
 	}
 
-	function load() {
+	function load(id) {
 		const addcommentbutton = document.getElementById("addcommentbutton")
 		addcommentbutton.addEventListener('click', function () {
 			showCommentForm()
@@ -340,6 +341,7 @@ var user_db = {}
 			cancelCommentForm()
 		}, false)
 
+		blogId = id
 		getUserInfo()
 
 	}

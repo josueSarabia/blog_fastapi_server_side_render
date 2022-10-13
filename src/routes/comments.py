@@ -1,29 +1,15 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status, Cookie
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database.database import SessionLocal
 from models.comment import Comment, CommentCreate
-from database.querys.comment import create_comment, get_blog, update_comment, get_comment, delete_comment, get_blog_comments
+from database.querys.comment import create_comment, update_comment, get_comment, delete_comment, get_blog_comments
+from database.querys.blog import get_blog
 from database.utils.utils_db import get_db
 from middlewares.auth import  get_current_user
 from models.user import User
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="templates")
+
 comments_router = APIRouter()
-
-# se debe eliminar? ---> este seria el blog detail
-@comments_router.get("/comment-test/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def comment_test(request: Request):
-    return templates.TemplateResponse("comment.html", {"request": request})
-
-# se debe eliminar
-@comments_router.get("/blogs/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def blogs_test(request: Request):
-    return templates.TemplateResponse("blogs.html", {"request": request})
-
 
 @comments_router.get("/blogs/{blog_id}/comments/", status_code=status.HTTP_200_OK)
 def get_all_comments(blog_id: str,  db: Session = Depends(get_db), user: User = Depends(get_current_user)):

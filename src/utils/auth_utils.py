@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Union, Any
 from jose import jwt
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 180  # 3 horas
+ACCESS_TOKEN_EXPIRE_MINUTES = 86400  # 24 horas
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
 ALGORITHM = "HS256"
 JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']

@@ -130,4 +130,4 @@ dmypy.json
 
 
 # alembic versions
-src/alembic/versions/
+src/alembic/versions/*

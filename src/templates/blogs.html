@@ -59,6 +59,9 @@
 
 					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 						<li class="nav-item">
+							<a class="nav-link" href="/user/blogs/">Mis blogs</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link" href="/profile/">Perfil</a>
 						</li>
 						<li class="nav-item">
@@ -75,29 +78,35 @@
 					<h2><span>All Stories</span></h2>
 				</div>
 				<div style="column-count: 3; column-gap: 1.25rem;" class="card-columns listrecent">
-			
+					
+					{% for blog in data.blogs %}
 					<div class="card" style="display: inline-block; width: 100%;">
-						<a href="/comment-test/">
+						<a href="/blogs/detail/{{blog.blog_id|safe}}/">
 							<img class="img-fluid" src="{{ url_for('static', path='/images/5.webp') }}" alt="">
 						</a>
 						<div class="card-block" style=" flex: 1 1 auto; padding: 1.25rem;">
 							<h2 class="card-title">
-								<a style="text-decoration: none;" href="/comment-test/">Autumn doesn't have to be nostalgic, you know?</a>
+								<a style="text-decoration: none;" href="/blogs/detail/{{blog.blog_id|safe}}/">{{ blog.blog.title }}</a>
 							</h2>
+							{% if blog.user_id != blog.blog.user_id %}
+							<h5 style="font-size: 12px;">Compartido por {{ blog.user.name + " " + blog.user.last_name}}</h5>
+							{% else %}
+							<h5 style="font-size: 12px; color: #fff;">Autor</h5>
+							{% endif %}
 							<!-- <h4 class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</h4> -->
 							<div class="metafooter">
 								<div class="wrapfooter">
 									<span class="author-meta">
 										<span class="post-name">
-											<a href="author.html">Sal</a>
+											<a>{{"autor: " + blog.blog.user.name + " " + blog.blog.user.last_name}}</a>
 										</span>
 										<br/>
-										<span class="post-date">22 July 2017</span>
+										<span class="post-date">{{blog.blog.updated_at}}</span>
 									</span>
 									<span class="post-read-more">
-										<a href="post.html" title="Read Story">
-											<svg class="svgIcon-use" width="25" height="25" viewbox="0 0 25 25">
-												<path d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z" fill-rule="evenodd"></path>
+										<a  style="cursor: pointer;">
+											<svg id="shareBlogButton{{blog.id|safe}}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
+												<path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
 											</svg>
 										</a>
 									</span>
@@ -105,6 +114,7 @@
 							</div>
 						</div>
 					</div>
+					{% endfor %}
 				</div>
 			</section>
 		</div>
@@ -118,9 +128,64 @@
 		<script src="{{ url_for('static', path='/js/datepicker/picker.js') }}"></script>
     <script src="{{ url_for('static', path='/js/datepicker/picker.date.js') }}"></script>
     <script src="{{ url_for('static', path='/js/datepicker/main.js') }}"></script>
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script src="sweetalert2.all.min.js"></script>
 		
 		
 		<script>
+			function shareBlog(event) {
+				event.preventDefault()
+				event.stopPropagation()
+				let targetBlog = event.target
+				let userBlogId = targetBlog.id.replace("shareBlogButton", "").replaceAll('"', '')
+				const blogs = JSON.parse('{{data.blogs}}'.replaceAll("&#39;", '"'))
+				const blog = blogs.filter(el => el.id === userBlogId)[0]
+				const blogId = blog.blog_id
+				
+
+				fetch("http://localhost:8000/blogs/share/", {
+					method: "post",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({
+						id: blogId,
+					}),
+				}).then(async (response) => {
+					if (response.status == 201) {
+						Swal.fire({
+							title: 'Blog Compartido!',
+							text: 'El blog ha sido compartido exitosamente.',
+							icon: 'success',
+							confirmButtonText: 'Ok, entendido.'
+						}).then(() => {
+							window.location.reload();
+						})
+					} else if (response.status == 400) {
+						const body = await response.json()
+						if (body.detail == "Cant share a blog more than once") {
+							Swal.fire({
+								title: 'Error!',
+								text: 'Ya has compartido este blog y no puedes hacerlo nuevamente.',
+								icon: 'error',
+								confirmButtonText: 'Ok, entendido.'
+							})
+						}
+					}
+				});
+			}
+
+			function addEventListeners() {
+				const blogs = JSON.parse('{{data.blogs}}'.replaceAll("&#39;", '"'))
+				blogs.forEach(blog => {
+					const shareBlogButton = document.getElementById('shareBlogButton' + blog.id);
+					shareBlogButton.addEventListener('click', function (event) {
+						shareBlog(event)
+					}, false)
+
+				});
+			}
+
 			window.onload = function () {
 				const btnLogout = document.getElementById("logoutbutton");
 				btnLogout.addEventListener('click', function (event) {
@@ -143,9 +208,9 @@
 					let titleValue = titleElement.value
 					console.log(titleValue)
 
-
-
 				}, false)
+				
+				addEventListeners()
 			}
 		</script>
 	</body>

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Response, status, HTTPException, Depends, Request
+from database.querys.blog import delete_blog, get_user_blogs
 from middlewares.auth import get_current_user
 from models.user import User
 from database.database import SessionLocal
@@ -62,7 +63,15 @@ async def delete_user_info(response: Response, user_id: str, user: User = Depend
     if user_db is None:
         return
     
-    delete_user(db, user_id)
+    blogs_db = get_user_blogs(db, user.id)
+
+    print(blogs_db)
+    """ for blog in blogs_db:
+        print('deleting', str(blog.blog_id))
+        delete_blog(db, str(blog.blog_id), str(user.id)) """
+    
+    """ print("delete user")
+    delete_user(db, user_id) """
 
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")

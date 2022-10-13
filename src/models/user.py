@@ -1,3 +1,4 @@
+import email
 from uuid import uuid4
 from pydantic import BaseModel, UUID4
 
@@ -13,6 +14,16 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: UUID4
+
+    def reprJSON(self):
+        return dict(
+            email = self.email,
+            name = self.name,
+            last_name = self.last_name,
+            country = self.country,
+            age = self.age,
+            id = self.id,
+        )
     
     class Config:
         orm_mode = True
