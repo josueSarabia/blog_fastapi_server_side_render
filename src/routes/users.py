@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, status, HTTPException, Depends, Request
 from database.querys.blog import delete_blog, get_user_blogs
+from database.querys.comment import delete_all_user_comments
 from middlewares.auth import get_current_user
 from models.user import User
 from database.database import SessionLocal
@@ -62,10 +63,13 @@ async def delete_user_account(response: Response, user_id: str, user: User = Dep
     if user_db is None:
         return
     
-    blogs_db = get_user_blogs(db, user.id)
+    results = get_user_blogs(db, user.id, limit=100000)
+    blogs_db = results["results"]
 
     for blog in blogs_db:
-        delete_blog(db, str(blog.blog_id), str(user.id))
+        delete_blog(db, blog_id=str(blog.blog_id), user_id=str(user.id))
+
+    delete_all_user_comments(db, str(user.id))
     
     delete_user(db, user_id)
 

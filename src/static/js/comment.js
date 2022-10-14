@@ -307,6 +307,8 @@ var blogId = ""
 					const commentsList = document.getElementById("commentsCol");
 					const commentElement = document.getElementById(commentId);
 					commentsList.removeChild(commentElement)
+					let index = comments_db.findIndex(el => el.id == commentId)
+					comments_db.splice(index, 1)
 				})
 			} else {
 				editloadingbutton.classList.remove("spinner-border")

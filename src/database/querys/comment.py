@@ -83,6 +83,18 @@ def get_blog_comments(db: Session, blog_id: str):
     
     return comments
 
+def delete_all_user_comments(db: Session, user_id: str):
+    """ deletes all Comments of a user
+
+    Args:
+        db (Session): database session
+        user_id (str): id of the user
+
+    """
+    db.query(CommentModel).filter(CommentModel.user_id == user_id).delete()
+
+    db.commit()
+    return
 
 
 

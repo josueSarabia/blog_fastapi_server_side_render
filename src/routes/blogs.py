@@ -126,7 +126,7 @@ def get_all_blogs_of_the_app(request: Request, start: int = 0, limit: int = 6, d
     })
 
 @blogs_router.get("/blogs/search/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def search_blogs(request: Request, title: str, dstart: str, dend: str, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def search_all_blogs(request: Request, title: str, dstart: str, dend: str, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     results = search_blogs(db,  title, dstart, dend, start, limit)
     blogs_db = results["results"]
     total = results["total"]

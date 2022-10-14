@@ -185,7 +185,7 @@
 				}).then((response) => {
 					loading.classList.remove("spinner-border")
 					loading.classList.remove("spinner-border-sm")
-					if (response.status == 200) {
+					if (response.status == 201) {
 						window.location.replace('/blogs/');
 					} else {
 						errorfetch.classList.remove("d-none")

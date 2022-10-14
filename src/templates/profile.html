@@ -216,6 +216,11 @@
 		saveUpdateFormButton.classList.add('d-none')
 		const cancelUpdateFormButton = document.getElementById("cancelUpdateFormButton");
 		cancelUpdateFormButton.classList.add('d-none')
+
+		const errorfetch = document.getElementById("errorfetch");
+
+		errorfetch.classList.add("d-none")
+		errorfetch.innerText = "ocurrio un problema actualizando sus datos. Por favor intentenlo mas tarde."
 	}
 
 	function saveUpdateForm() {
@@ -240,6 +245,7 @@
 		const errorfetch = document.getElementById("errorfetch");
 
 		errorfetch.classList.add("d-none")
+		errorfetch.innerText = "ocurrio un problema actualizando sus datos. Por favor intentenlo mas tarde."
 		saveUpdateFormButton.setAttribute("disabled", "")
 		cancelUpdateFormButton.setAttribute("disabled", "")
 
@@ -258,19 +264,31 @@
 				country,
 				age
 			}),
-		}).then((response) => {
+		}).then(async (response) => {
 			saveloading.classList.remove("spinner-border")
 			saveloading.classList.remove("spinner-border-sm")
 
 			cancelloading.classList.remove("spinner-border")
 			cancelloading.classList.remove("spinner-border-sm")
 
-			showUpdateFormButton.classList.remove('d-none')
-			saveUpdateFormButton.classList.add('d-none')
-			cancelUpdateFormButton.classList.add('d-none')
-
 			saveUpdateFormButton.removeAttribute("disabled");
 			cancelUpdateFormButton.removeAttribute("disabled");
+
+			if (response.status == 200) {
+				showUpdateFormButton.classList.remove('d-none')
+				saveUpdateFormButton.classList.add('d-none')
+				cancelUpdateFormButton.classList.add('d-none')
+				
+			} else if (response.status == 400) {
+				const body = await response.json()
+				if (body.detail === "User with this email already exist" ) {
+					errorfetch.innerText = "El email ya se encuentra en uso."
+					errorfetch.classList.remove("d-none")
+				}
+				removeDisabled()
+			}
+
+			
 			
 		}).catch((error) => {
 			saveloading.classList.remove("spinner-border")
