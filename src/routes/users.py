@@ -14,7 +14,7 @@ users_router = APIRouter()
 
 
 @users_router.get('/profile/', status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-async def get_user_info(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+async def get_user_profile(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     user_db = get_user_by_id(db, user.id)
     if user_db is None:
         raise HTTPException(
@@ -57,7 +57,7 @@ async def update_user_info(updated_user: User, user: User = Depends(get_current_
     return update_user(db, updated_user)
 
 @users_router.delete('/users/{user_id}/', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user_info(response: Response, user_id: str, user: User = Depends(get_current_user),  db: Session = Depends(get_db)):
+async def delete_user_account(response: Response, user_id: str, user: User = Depends(get_current_user),  db: Session = Depends(get_db)):
     user_db = get_user_by_id(db, user_id)
     if user_db is None:
         return

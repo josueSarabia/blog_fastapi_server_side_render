@@ -12,7 +12,7 @@ from models.exception import RequiresLoginException
 
 
 def create_blog(db: Session, blog: BlogCreate, user: User):
-    """ Create a Blog in the databse
+    """ Create a Blog in the database
 
     Args:
         db (Session): database session
@@ -58,7 +58,7 @@ def get_blog_relation(db: Session, blog_id: str, user_id: str):
     Args:
         db (Session): database session
         blog_id (str): id of the Blog 
-        user_id (str): id of the user 
+        user_id (str): id of the User 
 
     Returns:
         blog: returns the user and blog information
@@ -72,7 +72,7 @@ def get_blog(db: Session, blog_id: str):
     Args:
         db (Session): database session
         blog_id (str): id of the Blog 
-        user_id (str): id of the user 
+        user_id (str): id of the User 
 
     Returns:
         blog: returns the user and blog information
@@ -138,12 +138,12 @@ def get_all_blogs(db: Session, start: int = 0, limit: int = 6):
         limit (int): size of the page
 
     Returns:
-        dict: a dictionary with the blogs of the user(results) and its total(total)
+        dict: a dictionary with the blogs(results) and its total(total)
     """
-    user_blogs = db.query(UserBlogModel).offset(start).limit(limit).all()
+    blogs = db.query(UserBlogModel).offset(start).limit(limit).all()
     total = db.query(UserBlogModel).count()
 
-    return {"results": user_blogs, "total": total}
+    return {"results": blogs, "total": total}
 
 def share_blog(db: Session, blog_id: str, user_id: str):
     """ Creates a new user-blog relationship in the database
@@ -176,7 +176,7 @@ def search_blogs(db: Session, title: str, dstart: str, dend: str, start: int = 0
         limit (int): size of the page
 
     Returns:
-        dict: a dictionary with the blogs of the user(results) and its total(total)
+        dict: a dictionary with the blogs(results) and its total(total)
     """
     query = db.query(BlogModel)
 
@@ -207,9 +207,9 @@ def search_blogs(db: Session, title: str, dstart: str, dend: str, start: int = 0
             )
 
 
-    user_blogs = query.offset(start).limit(limit).all()
+    blogs = query.offset(start).limit(limit).all()
     total = query.count()
     
-    return {"results": user_blogs, "total": total}
+    return {"results": blogs, "total": total}
 
 

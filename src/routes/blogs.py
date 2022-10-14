@@ -34,7 +34,7 @@ def create_blog_for_a_user(blog: BlogCreate, db: Session = Depends(get_db), user
     return new_blog
 
 @blogs_router.get("/user/blogs/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def get_user_all_blogs(request: Request, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def get_all_blogs_of_a_user(request: Request, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     results = get_user_blogs(db, user.id, start, limit)
     blogs_db = results["results"]
     total = results["total"]
@@ -72,7 +72,7 @@ def get_update_blog_form(blog_id: str, request: Request, db: Session = Depends(g
     )
 
 @blogs_router.put("/blogs/", status_code=status.HTTP_200_OK, response_model=Blog)
-def update_user_blog(blog: BlogUpdate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def update_a_blog_of_a_user(blog: BlogUpdate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
 
     if blog.title.replace(" ", "") == "":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cant create a blog without title")
@@ -93,7 +93,7 @@ def update_user_blog(blog: BlogUpdate, db: Session = Depends(get_db), user: User
     return db_blog
 
 @blogs_router.delete("/blogs/{blog_id}/", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user_blog(blog_id: str,  db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def delete_a_blog_of_a_user(blog_id: str,  db: Session = Depends(get_db), user: User = Depends(get_current_user)):
 
     db_blog = get_blog(db=db, blog_id=blog_id)
     if db_blog is None:
@@ -126,7 +126,7 @@ def get_all_blogs_of_the_app(request: Request, start: int = 0, limit: int = 6, d
     })
 
 @blogs_router.get("/blogs/search/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def get_user_all_blogs(request: Request, title: str, dstart: str, dend: str, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def search_blogs(request: Request, title: str, dstart: str, dend: str, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     results = search_blogs(db,  title, dstart, dend, start, limit)
     blogs_db = results["results"]
     total = results["total"]
@@ -159,8 +159,6 @@ def get_user_all_blogs(request: Request, title: str, dstart: str, dend: str, sta
             "total": total
         }
     })
-
-
 
 @blogs_router.post("/blogs/share/", status_code=status.HTTP_201_CREATED, response_model=Blog)
 async def user_share_a_blog(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):

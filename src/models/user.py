@@ -8,7 +8,7 @@ class UserBase(BaseModel):
     Args:
         email (str): email of the User
         name (str): name of the User
-        last_name (str): last_name of the User
+        last_name (str): last name of the User
         country (str): country of the User
         age (int): age of the User
 
@@ -20,12 +20,12 @@ class UserBase(BaseModel):
     age: int
 
 class UserCreate(UserBase):
-    """ Class with necesary information to create a Blog
+    """ Class with necesary information to create a User
 
     Args:
         email (str): email of the User
         name (str): name of the User
-        last_name (str): last_name of the User
+        last_name (str): last name of the User
         country (str): country of the User
         age (int): age of the User
         password (str): plain password of the User
@@ -41,7 +41,7 @@ class User(UserBase):
         email (str): email of the User
         password (str): hashed password of the User
         name (str): name of the User
-        last_name (str): last_name of the User
+        last_name (str): last name of the User
         country (str): country of the User
         age (int): age of the User
     """
@@ -55,7 +55,7 @@ class User(UserBase):
             email (str): email of the User
             password (str): hashed password of the User
             name (str): name of the User
-            last_name (str): last_name of the User
+            last_name (str): last name of the User
             country (str): country of the User
             age (int): age of the User
         

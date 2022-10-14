@@ -8,7 +8,7 @@ class CommentBase(BaseModel):
 
     Args:
         blog_id (str): id of the blog
-        content (str): session of the database
+        content (str): content of the Comment
 
     """
     content: str
@@ -19,7 +19,7 @@ class CommentCreate(CommentBase):
 
     Args:
         blog_id (str): id of the blog
-        content (str): session of the database
+        content (str): content of the Comment
 
     """
     pass

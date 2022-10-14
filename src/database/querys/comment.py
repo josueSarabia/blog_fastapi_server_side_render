@@ -7,18 +7,15 @@ from database.models.comment import Comment as CommentModel
 
 
 def create_comment(db: Session, comment: CommentCreate, user: User):
-    """ Search Blogs in the database (only originals).
+    """ Create a Comment in the database
 
     Args:
         db (Session): database session
-        title (str): title to search
-        dstart (str): start date to filter
-        dend(str): end date to filter
-        start (int): offset needed for pagination 
-        limit (int): size of the page
+        commment (CommentCreate): information of the new Comment
+        user (User): user who is creating the Comment
 
     Returns:
-        dict: a dictionary with the blogs of the user(results) and its total(total)
+        db_comment: the comment that was created
     """
     created_at = datetime.utcnow().isoformat()
     db_comment = CommentModel(**comment.dict(), user_id=user.id , created_at=created_at, updated_at=created_at)

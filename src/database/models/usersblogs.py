@@ -14,8 +14,8 @@ class UserBlog(Base):
         id (UUID): id of the UserBlog relationship
         blog_id (UUID): Blog related to the User
         user_id (UUID): User who create or share the Blog
-        user = information of the user who created or shared the blog
-        blog = information of the Blog
+        user (User): information of the user who created or shared the blog
+        blog (Blog): information of the Blog
     """
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
@@ -26,4 +26,10 @@ class UserBlog(Base):
     blog = relationship("Blog", lazy="joined")
 
     def as_dict(self):
-       return {c.key: getattr(self, c.key, None) for c in inspect(self).mapper.column_attrs}
+        """
+        Format a UserBlog to a dictionary
+
+        Returns:
+            dict: dictionary that contains the UserBlog informarion
+        """
+        return {c.key: getattr(self, c.key, None) for c in inspect(self).mapper.column_attrs}

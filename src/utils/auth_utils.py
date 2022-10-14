@@ -12,7 +12,7 @@ JWT_REFRESH_SECRET_KEY = os.environ['JWT_REFRESH_SECRET_KEY']
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_hashed_password(password: str):
-    """ hashed a plain text(password)
+    """ creates a hashed plain text(password)
 
     Args:
         password (str): plain text password
@@ -24,7 +24,7 @@ def get_hashed_password(password: str):
     return password_context.hash(password)
 
 def verify_password(password: str, hashed_pass: str):
-    """ vaerify a plain text(password) against a hashed string(password)
+    """ verify a plain text(password) against a hashed text(password)
 
     Args:
         password (str): plain text password

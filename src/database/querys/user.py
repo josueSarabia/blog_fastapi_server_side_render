@@ -6,7 +6,7 @@ from database.models.user import User as UserModel
 
 
 def create_user(db: Session, user: UserCreate):
-    """ Create a user on the database
+    """ Create a user in the database
 
     Args:
         db (Session): database session
@@ -106,7 +106,7 @@ def update_user(db: Session, user: UserSchema):
     return user
 
 def delete_user(db: Session, user_id: str):
-    """ Delete the user from the database and all his blogs
+    """ Delete the user from the database
 
     Args:
         db (Session): database session

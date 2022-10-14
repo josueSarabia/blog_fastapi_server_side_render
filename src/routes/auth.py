@@ -14,7 +14,7 @@ templates = Jinja2Templates(directory="templates")
 auth_router = APIRouter()
 
 @auth_router.get("/signup/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def login_page(request: Request, access_token: str | None = Cookie(default=None)):
+def signup_page(request: Request, access_token: str | None = Cookie(default=None)):
     if access_token is not None:
         return RedirectResponse('/profile/', status_code=303)
     return templates.TemplateResponse("signup.html", {"request": request})

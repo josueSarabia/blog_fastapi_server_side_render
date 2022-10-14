@@ -4,7 +4,7 @@ from models.user import User
 from models.blog import Blog
 
 class UserBlogBase(BaseModel):
-    """ Class with base blog information
+    """ Class with base UserBlog relatioship information
 
     Args:
         user_id (UUID4): id of the user
@@ -15,7 +15,7 @@ class UserBlogBase(BaseModel):
     blog_id: UUID4
 
 class UserBlogCreate(UserBlogBase):
-    """ Class with necesary information to create a Blog
+    """ Class with necesary information to create a UserBlog relatioship
 
     Args:
         user_id (UUID4): id of the user

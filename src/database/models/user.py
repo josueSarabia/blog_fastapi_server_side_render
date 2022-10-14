@@ -14,7 +14,7 @@ class User(Base):
         email (str): email of the User
         password (str): hashed password of the User
         name (str): name of the User
-        last_name (str): last_name of the User
+        last_name (str): last name of the User
         country (str): country of the User
         age (int): age of the User
     """
