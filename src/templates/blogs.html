@@ -1,0 +1,308 @@
+<html lang="en">
+	<head>
+			<meta charset="UTF-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<link rel="stylesheet" href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}">
+			<link href="{{ url_for('static', path='/css/blog/mediumish.css') }}" rel="stylesheet" >
+
+			<link rel="stylesheet" href="{{ url_for('static', path='/css/datepicker/classic.css') }}">
+    	<link rel="stylesheet" href="{{ url_for('static', path='/css/datepicker/classic.date.css') }}">
+			<link rel="stylesheet" href="{{ url_for('static', path='/css/datepicker/style.css') }}">
+			<title>Blogs</title>
+	</head>
+	<body style="background: #f8f8f8;">
+		<nav class="navbar navbar-expand-lg bg-light bg-white fixed-top">
+			<div class="container-fluid">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+					<div class="row" style="width: 100%;">
+						<div class="col" style="max-width: fit-content;">
+							<p>Titulo:</p>
+						</div>
+						
+						<div class="col-2">
+							<input type="text" id="titleSearch"  class="form-control" placeholder="Titulo...">
+						</div>
+
+						<div class="col" style="max-width: fit-content;">
+							<p>Fecha de inicio:</p>
+						</div>
+
+						<div class="col-2">
+							<form action="#">
+								<div class="form-group">
+									<input type="text" class="form-control" id="pick-date-start" placeholder="Selecciona una fecha">
+								</div>
+							</form>
+						</div>
+
+						<div class="col" style="max-width: fit-content;">
+							<p>Fecha de fin:</p>
+						</div>
+
+						<div class="col-2">
+							<form action="#">
+								<div class="form-group">
+									<input type="text" class="form-control" id="pick-date-end" placeholder="Selecciona una fecha">
+								</div>
+							</form>
+						</div>
+
+						<div class="col" >
+							<button id="searchButton" type="button" class="btn btn-primary small"> buscar </button>
+						</div>
+					</div>
+
+					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link" href="/user/blogs/">Mis blogs</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/profile/">Perfil</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" style="cursor: pointer;" id="logoutbutton">Cerrar sesión</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<section class="recent-posts">
+				<div class="section-title">
+					<h2><span>Todos los Blogs - {{ data.total }} blogs</span></h2>
+				</div>
+				<div style="column-count: 3; column-gap: 1.25rem;" class="card-columns listrecent">
+					
+					{% for blog in data.blogs %}
+					<div class="card" style="display: inline-block; width: 100%;">
+						<a href="/blogs/detail/{{blog.blog_id|safe}}/">
+							<img class="img-fluid" src="{{ url_for('static', path='/images/5.webp') }}" alt="">
+						</a>
+						<div class="card-block" style=" flex: 1 1 auto; padding: 1.25rem;">
+							<h2 class="card-title">
+								<a style="text-decoration: none;" href="/blogs/detail/{{blog.blog_id|safe}}/">{{ blog.blog.title }}</a>
+							</h2>
+							{% if blog.user_id != blog.blog.user_id %}
+							<h5 style="font-size: 12px;">Compartido por {{ blog.user.name + " " + blog.user.last_name}}</h5>
+							{% else %}
+							<h5 style="font-size: 12px; color: #fff;">Autor</h5>
+							{% endif %}
+							<!-- <h4 class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</h4> -->
+							<div class="metafooter">
+								<div class="wrapfooter">
+									<span class="author-meta">
+										<span class="post-name">
+											<a>{{"autor: " + blog.blog.user.name + " " + blog.blog.user.last_name}}</a>
+										</span>
+										<br/>
+										<span id="date{{blog.id|safe}}" class="post-date"></span>
+									</span>
+									<span class="post-read-more">
+										<a  style="cursor: pointer;">
+											<svg id="shareBlogButton{{blog.id|safe}}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
+												<path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+											</svg>
+										</a>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+
+				<div class="row">
+					{% if data.previous.start >= 0 %}
+					<div class="col d-flex justify-content-start">
+						<button id="previousPageButton" class="btn btn-primary"> anterior </button>
+					</div>
+					{% endif %}
+
+					{% if data.next.start < data.total %}
+					<div class="col d-flex justify-content-end">
+						<button id="nextPageButton" class="btn btn-primary"> siguiente </button>
+					</div>
+					{% endif %}
+				</div>
+				
+			</section>
+		</div>
+
+
+		<script src="{{ url_for('static', path='/js/logout.js') }}"></script>
+
+		<script src="{{ url_for('static', path='/js/datepicker/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/datepicker/popper.min.js') }}"></script>
+		<script src="{{ url_for('static', path='/js/bootstrap/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', path='/js/datepicker/picker.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/datepicker/picker.date.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/datepicker/main.js') }}"></script>
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script src="sweetalert2.all.min.js"></script>
+		
+		
+		<script>
+			function shareBlog(event) {
+				event.preventDefault()
+				event.stopPropagation()
+				let targetBlog = event.target
+				let userBlogId = targetBlog.id.replace("shareBlogButton", "").replaceAll('"', '')
+				const blogs = JSON.parse('{{data.blogs}}'.replaceAll("&#39;", '"'))
+				const blog = blogs.filter(el => el.id === userBlogId)[0]
+				const blogId = blog.blog_id
+				
+
+				fetch("http://localhost:8000/blogs/share/", {
+					method: "post",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({
+						id: blogId,
+					}),
+				}).then(async (response) => {
+					if (response.status == 201) {
+						Swal.fire({
+							title: 'Blog Compartido!',
+							text: 'El blog ha sido compartido exitosamente.',
+							icon: 'success',
+							confirmButtonText: 'Ok, entendido.'
+						}).then(() => {
+							window.location.reload();
+						})
+					} else if (response.status == 400) {
+						const body = await response.json()
+						if (body.detail == "Cant share a blog more than once") {
+							Swal.fire({
+								title: 'Error!',
+								text: 'Ya has compartido este blog y no puedes hacerlo nuevamente.',
+								icon: 'error',
+								confirmButtonText: 'Ok, entendido.'
+							})
+						}
+					}
+				});
+			}
+
+			function getDate(date) {
+				let dateObject = new Date(date)
+				let humanRedableDate = dateObject.getDate() +"-"+ (dateObject.getMonth()+1) +"-"+ dateObject.getFullYear()
+				let timezoneInHours = dateObject.getTimezoneOffset() / 60
+				let humanRedableHours = Math.abs(dateObject.getHours() - timezoneInHours) +":"+( dateObject.getMinutes() < 10 ? "0" : "" ) + dateObject.getMinutes()
+				let fullDate = humanRedableDate + " " + humanRedableHours
+
+				return fullDate
+			}
+
+			function addEventListeners() {
+				const blogs = JSON.parse('{{data.blogs}}'.replaceAll("&#39;", '"'))
+				blogs.forEach(blog => {
+					const shareBlogButton = document.getElementById('shareBlogButton' + blog.id);
+					shareBlogButton.addEventListener('click', function (event) {
+						shareBlog(event)
+					}, false)
+
+					const dateLabel = document.getElementById('date' + blog.id);
+					dateLabel.innerText = getDate(blog.blog.updated_at)
+				});
+			}
+
+			function searchBlogs(startDate, endDate, title) {
+				console.log(startDate, endDate, title)
+
+				let startDateArray
+				let shortStartDateArray
+				let startDateFormated
+				if (startDate) {
+					startDateArray = startDate.split("T")[0]
+					shortStartDateArray = startDateArray.split("-")
+					startDateFormated = shortStartDateArray[2] + "-" + shortStartDateArray[1] + "-" + shortStartDateArray[0]
+				}
+
+				let endDateArray
+				let shortEndDateArray
+				let endDateFormated
+				if (endDate) {
+					endDateArray = endDate.split("T")[0]
+					shortEndDateArray = endDateArray.split("-")
+					endDateFormated = shortEndDateArray[2] + "-" + shortEndDateArray[1] + "-" + shortEndDateArray[0]
+				}
+ 
+				window.location.href = `/blogs/search/?title=${title}&dstart=${startDateFormated || ""}&dend=${endDateFormated || ""}`
+			}
+
+			function nextPage() {
+				start = '{{data.next.start|safe}}'
+				limit = '{{data.next.limit|safe}}'
+				window.location.href = `http://localhost:8000/blogs/?start=${start}&limit=${limit}`
+			}
+
+			function previousPage() {
+				start = '{{data.previous.start|safe}}'
+				limit = '{{data.previous.limit|safe}}'
+				window.location.href = `http://localhost:8000/blogs/?start=${start}&limit=${limit}`
+			}
+
+			window.onload = function () {
+				const btnLogout = document.getElementById("logoutbutton");
+				btnLogout.addEventListener('click', function (event) {
+					logout()
+				}, false)
+
+				const searchButton = document.getElementById("searchButton");
+				searchButton.addEventListener('click', function (event) {
+					let inputDateStart = document.getElementById("pick-date-start")
+					let dateStart
+					let dateStartUTC
+					if (inputDateStart.value) {
+						dateStart = new Date(inputDateStart.value)
+						dateStartUTC = dateStart.toISOString()
+					}
+
+					let inputDateEnd = document.getElementById("pick-date-end")
+					let dateEnd
+					let dateEndUTC
+					if (inputDateEnd.value) {
+						dateEnd = new Date(inputDateEnd.value)
+						dateEndUTC = dateEnd.toISOString()
+					}
+
+					let titleElement = document.getElementById("titleSearch")
+					let titleValue = titleElement.value
+
+					if (!titleValue && !dateEndUTC && !dateStartUTC) {
+						return
+					} else {
+						searchBlogs(dateStartUTC, dateEndUTC, titleValue)
+					}
+
+				}, false)
+				
+				const nextPageButton = document.getElementById("nextPageButton");
+				if (nextPageButton) {
+					nextPageButton.addEventListener('click', function (event) {
+						nextPage()
+					}, false)
+				}
+				
+
+				const previousPageButton = document.getElementById("previousPageButton");
+				if (previousPageButton) {
+					previousPageButton.addEventListener('click', function (event) {
+						previousPage()
+					}, false)
+				}
+				
+
+				addEventListeners()
+			}
+		</script>
+	</body>
+	
+</html>

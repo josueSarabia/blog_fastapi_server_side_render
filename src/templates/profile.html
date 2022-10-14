@@ -1,0 +1,340 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/signup/style.css') }}">
+		<link href="{{ url_for('static', path='/css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+    <title>Perfil</title>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg bg-light bg-white fixed-top">
+		<div class="container-fluid">
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link" href="/blogs/">Blogs</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/user/blogs/">Mis blogs</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="cursor: pointer;" id="logoutbutton">Cerrar sesión</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+  
+	<div style="height: 100%; display: flex; justify-content: center; align-items: center; padding: 0 !important;" class="main">
+		<section>
+			<div class="container-signup">
+				<div style="justify-content: center;" class="signup-content">
+					<div class="signup-form">
+						<h2 style="text-align: center;" class="form-title">Perfil</h2>
+						<form class="register-form needs-validation" id="form" novalidate>
+
+							<div id="errorfetch" class="d-none" style="color: crimson;">ocurrio un problema actualizando sus datos. Por favor intentenlo mas tarde.</div>
+
+							<label class="mt-2">Email</label>
+							<div class="input-group has-validation">
+								<input type="email" disabled value="{{data.email}}" class="form-control" id="username" placeholder="Ingresar Email" required>
+								<div class="invalid-feedback">
+									Ingresar un email valido
+								</div>
+							</div>
+
+							<label class="mt-2">Nombre</label>
+							<div class="input-group has-validation">
+								<input type="text" disabled value="{{data.name}}" class="form-control" id="name" placeholder="Ingresar Nombre" required>
+								<div class="invalid-feedback">
+									Ingresar Nombre
+								</div>
+							</div>
+
+							<label class="mt-2">Apellido</label>
+							<div class="input-group has-validation">
+								<input type="text" disabled value="{{data.last_name}}" class="form-control" id="lastName" placeholder="Ingresar Apellido" required>
+								<div class="invalid-feedback">
+									Ingresar apellidos
+								</div>
+							</div>
+
+							<label class="mt-2">Pais</label>
+							<div class="input-group has-validation">
+								<input type="text" disabled value="{{data.country}}" class="form-control" id="country" placeholder="Ingresar Pais" required>
+								<div class="invalid-feedback">
+									Ingresar pais
+								</div>
+							</div>
+
+							<label class="mt-2">Edad</label>
+							<div class="input-group has-validation">
+								<input type="number" disabled value="{{data.age}}" class="form-control" id="age" placeholder="Ingresar Edad" required>
+								<div class="invalid-feedback">
+									Ingresar Edad
+								</div>
+							</div>
+
+							<div  class="row">
+								<div style="display: flex; flex-direction: column;" class="col">
+									<label class="mt-2">Eliminar Cuenta</label>
+									<button style="max-width: 120px;" type="button" id="deleteUserButton" class="btn btn-danger btn-sm">
+										<span id="loadingdeletebutton" class="" ></span>
+										Eliminar
+									</button>
+								</div>
+							</div>
+
+							
+
+
+							<div class="row">
+								<div class="col d-flex justify-content-center">
+									<button type="button" id="showUpdateFormButton" class=" btn btn-primary mt-4">
+										<span id="loadingbutton" class="" ></span>
+										Actualizar
+									</button>
+
+									<button type="button" style="margin-right: 10px !important;" id="saveUpdateFormButton" class="btn btn-primary mt-4 d-none">
+										<span id="saveloadingbutton" class="" ></span>
+										Guardar
+									</button>
+
+									<button type="button" id="cancelUpdateFormButton" class=" btn btn-primary mt-4 d-none">
+										<span id="cancelloadingbutton" class="" ></span>
+										Cancelar
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</body>
+
+<script src="{{ url_for('static', path='/js/logout.js') }}"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="sweetalert2.all.min.js"></script>
+<script>
+	window.onload = function () {
+		const btnLogout = document.getElementById("logoutbutton");
+		btnLogout.addEventListener('click', function (event) {
+			logout()
+		}, false)
+
+
+		const showUpdateFormButton = document.getElementById("showUpdateFormButton");
+		showUpdateFormButton.addEventListener('click', function (event) {
+			showUpdateForm()
+		}, false)
+
+		const saveUpdateFormButton = document.getElementById("saveUpdateFormButton");
+		saveUpdateFormButton.addEventListener('click', function (event) {
+			saveUpdateForm()
+		}, false)
+
+		const cancelUpdateFormButton = document.getElementById("cancelUpdateFormButton");
+		cancelUpdateFormButton.addEventListener('click', function (event) {
+			cancelUpdateForm()
+		}, false)
+
+		const deleteUserButton = document.getElementById("deleteUserButton");
+		deleteUserButton.addEventListener('click', function (event) {
+			deleteUser()
+		}, false)
+		
+	}
+
+	function showUpdateForm() {
+		removeDisabled()
+
+		const showUpdateFormButton = document.getElementById("showUpdateFormButton");
+		showUpdateFormButton.classList.add('d-none')
+
+		const saveUpdateFormButton = document.getElementById("saveUpdateFormButton");
+		saveUpdateFormButton.classList.remove('d-none')
+		const cancelUpdateFormButton = document.getElementById("cancelUpdateFormButton");
+		cancelUpdateFormButton.classList.remove('d-none')
+	}
+
+	function removeDisabled() {
+		const username = document.getElementById("username");
+		const name = document.getElementById("name");
+		const lastName = document.getElementById("lastName");
+		const country = document.getElementById("country");
+		const age = document.getElementById("age");
+
+		username.removeAttribute("disabled")
+		name.removeAttribute("disabled");
+		lastName.removeAttribute("disabled");
+		country.removeAttribute("disabled");
+		age.removeAttribute("disabled");
+	}
+
+	function addDisabled() {
+		const username = document.getElementById("username");
+		const name = document.getElementById("name");
+		const lastName = document.getElementById("lastName");
+		const country = document.getElementById("country");
+		const age = document.getElementById("age");
+
+		username.setAttribute("disabled", "")
+		name.setAttribute("disabled", "");
+		lastName.setAttribute("disabled", "");
+		country.setAttribute("disabled", "");
+		age.setAttribute("disabled", "");
+	}
+
+	function clearInputs() {
+		const username = document.getElementById("username");
+		const name = document.getElementById("name");
+		const lastName = document.getElementById("lastName");
+		const country = document.getElementById("country");
+		const age = document.getElementById("age");
+
+		username.value = '{{ data.email|tojson|safe }}'.replaceAll('"', '')
+		name.value = '{{ data.name|tojson|safe }}'.replaceAll('"', '')
+		lastName.value = '{{ data.last_name|tojson|safe }}'.replaceAll('"', '')
+		country.value = '{{ data.country|tojson|safe }}'.replaceAll('"', '')
+		age.value = '{{ data.age|tojson|safe }}'.replaceAll('"', '')
+	}
+
+	function cancelUpdateForm() {
+		addDisabled()
+		clearInputs()
+
+		const showUpdateFormButton = document.getElementById("showUpdateFormButton");
+		showUpdateFormButton.classList.remove('d-none')
+
+		const saveUpdateFormButton = document.getElementById("saveUpdateFormButton");
+		saveUpdateFormButton.classList.add('d-none')
+		const cancelUpdateFormButton = document.getElementById("cancelUpdateFormButton");
+		cancelUpdateFormButton.classList.add('d-none')
+	}
+
+	function saveUpdateForm() {
+		const username = document.getElementById("username").value;
+		const name = document.getElementById("name").value;
+		const lastName = document.getElementById("lastName").value;
+		const country = document.getElementById("country").value;
+		const age = document.getElementById("age").value;
+
+
+		const saveloading = document.getElementById("saveloadingbutton")
+		saveloading.classList.add("spinner-border")
+		saveloading.classList.add("spinner-border-sm")
+
+		const cancelloading = document.getElementById("cancelloadingbutton")
+		cancelloading.classList.add("spinner-border")
+		cancelloading.classList.add("spinner-border-sm")
+
+		const showUpdateFormButton = document.getElementById("showUpdateFormButton");
+		const saveUpdateFormButton = document.getElementById("saveUpdateFormButton");
+		const cancelUpdateFormButton = document.getElementById("cancelUpdateFormButton");
+		const errorfetch = document.getElementById("errorfetch");
+
+		errorfetch.classList.add("d-none")
+		saveUpdateFormButton.setAttribute("disabled", "")
+		cancelUpdateFormButton.setAttribute("disabled", "")
+
+		addDisabled()
+
+		fetch("http://localhost:8000/users/", {
+			method: "put",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				id: '{{ data.id|tojson|safe }}'.replaceAll('"', ''),
+				email: username,
+				name,
+				last_name: lastName,
+				country,
+				age
+			}),
+		}).then((response) => {
+			saveloading.classList.remove("spinner-border")
+			saveloading.classList.remove("spinner-border-sm")
+
+			cancelloading.classList.remove("spinner-border")
+			cancelloading.classList.remove("spinner-border-sm")
+
+			showUpdateFormButton.classList.remove('d-none')
+			saveUpdateFormButton.classList.add('d-none')
+			cancelUpdateFormButton.classList.add('d-none')
+
+			saveUpdateFormButton.removeAttribute("disabled");
+			cancelUpdateFormButton.removeAttribute("disabled");
+			
+		}).catch((error) => {
+			saveloading.classList.remove("spinner-border")
+			saveloading.classList.remove("spinner-border-sm")
+
+			cancelloading.classList.remove("spinner-border")
+			cancelloading.classList.remove("spinner-border-sm")
+
+			saveUpdateFormButton.removeAttribute("disabled");
+			cancelUpdateFormButton.removeAttribute("disabled");
+
+			errorfetch.classList.remove("d-none")
+			removeDisabled()
+		});
+	}
+
+	function deleteUser() {
+		const userId = '{{ data.id|tojson|safe }}'.replaceAll('"', '')
+
+		const errorfetch = document.getElementById("errorfetch");
+		errorfetch.classList.add("d-none")
+
+		const deleteUserButton = document.getElementById("deleteUserButton");
+		const loadingdeletebutton = document.getElementById("loadingdeletebutton");
+
+		loadingdeletebutton.classList.add("spinner-border")
+		loadingdeletebutton.classList.add("spinner-border-sm")
+		deleteUserButton.setAttribute("disabled", "")
+
+		Swal.fire({
+			title: 'Eliminar perfil',
+			text: '¿Seguro que desea eliminar su perfil?. Esta acción no es reversible.',
+			icon: 'warning',
+			confirmButtonText: 'Si, Eliminar.',
+			confirmButtonColor: "#dc3545",
+			showCancelButton: true,
+			cancelButtonText: "No, cancelar.",
+			cancelButtonColor: "#3085d6"
+		}).then((responseSwal) => {
+			if (responseSwal.value) {
+				fetch("http://localhost:8000/users/" + userId, {
+					method: "delete",
+					body: "",
+				}).then((response) => {
+					loadingdeletebutton.classList.remove("spinner-border")
+					loadingdeletebutton.classList.remove("spinner-border-sm")
+					deleteUserButton.removeAttribute("disabled");
+
+					window.location.replace('/login/');
+				}).catch((error) => {
+					loadingdeletebutton.classList.remove("spinner-border")
+					loadingdeletebutton.classList.remove("spinner-border-sm")
+					deleteUserButton.removeAttribute("disabled");
+					errorfetch.classList.remove("d-none")
+				});
+			} else {
+				loadingdeletebutton.classList.remove("spinner-border")
+				loadingdeletebutton.classList.remove("spinner-border-sm")
+				deleteUserButton.removeAttribute("disabled");
+			}
+		})
+
+
+		
+	}
+</script>
+</html>
