@@ -9,7 +9,7 @@
 			<link rel="stylesheet" href="{{ url_for('static', path='/css/datepicker/classic.css') }}">
     	<link rel="stylesheet" href="{{ url_for('static', path='/css/datepicker/classic.date.css') }}">
 			<link rel="stylesheet" href="{{ url_for('static', path='/css/datepicker/style.css') }}">
-			<title>Blogs</title>
+			<title>Resultados</title>
 	</head>
 	<body style="background: #f8f8f8;">
 		<nav class="navbar navbar-expand-lg bg-light bg-white fixed-top">
@@ -19,45 +19,10 @@
 				</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-					<div class="row" style="width: 100%;">
-						<div class="col" style="max-width: fit-content;">
-							<p>Titulo:</p>
-						</div>
-						
-						<div class="col-2">
-							<input type="text" id="titleSearch"  class="form-control" placeholder="Titulo...">
-						</div>
-
-						<div class="col" style="max-width: fit-content;">
-							<p>Fecha de inicio:</p>
-						</div>
-
-						<div class="col-2">
-							<form action="#">
-								<div class="form-group">
-									<input type="text" class="form-control" id="pick-date-start" placeholder="Selecciona una fecha">
-								</div>
-							</form>
-						</div>
-
-						<div class="col" style="max-width: fit-content;">
-							<p>Fecha de fin:</p>
-						</div>
-
-						<div class="col-2">
-							<form action="#">
-								<div class="form-group">
-									<input type="text" class="form-control" id="pick-date-end" placeholder="Selecciona una fecha">
-								</div>
-							</form>
-						</div>
-
-						<div class="col" >
-							<button id="searchButton" type="button" class="btn btn-primary small"> buscar </button>
-						</div>
-					</div>
-
 					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link" href="/blogs/">Blogs</a>
+						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="/user/blogs/">Mis blogs</a>
 						</li>
@@ -75,30 +40,25 @@
 		<div class="container">
 			<section class="recent-posts">
 				<div class="section-title">
-					<h2><span>Todos los Blogs - {{ data.total }} blogs</span></h2>
+					<h2><span>Resultados de la busqueda - {{ data.total }} blogs</span></h2>
 				</div>
 				<div style="column-count: 3; column-gap: 1.25rem;" class="card-columns listrecent">
 					
 					{% for blog in data.blogs %}
 					<div class="card" style="display: inline-block; width: 100%;">
-						<a href="/blogs/detail/{{blog.blog_id|safe}}/">
+						<a href="/blogs/detail/{{blog.id|safe}}/">
 							<img class="img-fluid" src="{{ url_for('static', path='/images/5.webp') }}" alt="">
 						</a>
 						<div class="card-block" style=" flex: 1 1 auto; padding: 1.25rem;">
 							<h2 class="card-title">
-								<a style="text-decoration: none;" href="/blogs/detail/{{blog.blog_id|safe}}/">{{ blog.blog.title }}</a>
+								<a style="text-decoration: none;" href="/blogs/detail/{{blog.id|safe}}/">{{ blog.title }}</a>
 							</h2>
-							{% if blog.user_id != blog.blog.user_id %}
-							<h5 style="font-size: 12px;">Compartido por {{ blog.user.name + " " + blog.user.last_name}}</h5>
-							{% else %}
-							<h5 style="font-size: 12px; color: #fff;">Autor</h5>
-							{% endif %}
-							<!-- <h4 class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</h4> -->
+
 							<div class="metafooter">
 								<div class="wrapfooter">
 									<span class="author-meta">
 										<span class="post-name">
-											<a>{{"autor: " + blog.blog.user.name + " " + blog.blog.user.last_name}}</a>
+											<a>{{"autor: " + blog.user.name + " " + blog.user.last_name}}</a>
 										</span>
 										<br/>
 										<span id="date{{blog.id|safe}}" class="post-date"></span>
@@ -155,7 +115,7 @@
 				let userBlogId = targetBlog.id.replace("shareBlogButton", "").replaceAll('"', '')
 				const blogs = JSON.parse('{{data.blogs}}'.replaceAll("&#39;", '"'))
 				const blog = blogs.filter(el => el.id === userBlogId)[0]
-				const blogId = blog.blog_id
+				const blogId = blog.id
 				
 
 				fetch("http://localhost:8000/blogs/share/", {
@@ -209,44 +169,28 @@
 					}, false)
 
 					const dateLabel = document.getElementById('date' + blog.id);
-					dateLabel.innerText = getDate(blog.blog.updated_at)
+					dateLabel.innerText = getDate(blog.updated_at)
 				});
-			}
-
-			function searchBlogs(startDate, endDate, title) {
-				console.log(startDate, endDate, title)
-
-				let startDateArray
-				let shortStartDateArray
-				let startDateFormated
-				if (startDate) {
-					startDateArray = startDate.split("T")[0]
-					shortStartDateArray = startDateArray.split("-")
-					startDateFormated = shortStartDateArray[2] + "-" + shortStartDateArray[1] + "-" + shortStartDateArray[0]
-				}
-
-				let endDateArray
-				let shortEndDateArray
-				let endDateFormated
-				if (endDate) {
-					endDateArray = endDate.split("T")[0]
-					shortEndDateArray = endDateArray.split("-")
-					endDateFormated = shortEndDateArray[2] + "-" + shortEndDateArray[1] + "-" + shortEndDateArray[0]
-				}
- 
-				window.location.href = `/blogs/search/?title=${title}&dstart=${startDateFormated || ""}&dend=${endDateFormated || ""}`
 			}
 
 			function nextPage() {
 				start = '{{data.next.start|safe}}'
 				limit = '{{data.next.limit|safe}}'
-				window.location.href = `http://localhost:8000/blogs/?start=${start}&limit=${limit}`
+				const params = new Proxy(new URLSearchParams(window.location.search), {
+					get: (searchParams, prop) => searchParams.get(prop),
+				});
+
+				window.location.href = `/blogs/search/?start=${start}&limit=${limit}&title=${params.title}&dstart=${params.startDateFormated || ""}&dend=${params.endDateFormated || ""}`
 			}
 
 			function previousPage() {
 				start = '{{data.previous.start|safe}}'
 				limit = '{{data.previous.limit|safe}}'
-				window.location.href = `http://localhost:8000/blogs/?start=${start}&limit=${limit}`
+				const params = new Proxy(new URLSearchParams(window.location.search), {
+					get: (searchParams, prop) => searchParams.get(prop),
+				});
+
+				window.location.href = `/blogs/search/?start=${start}&limit=${limit}&title=${params.title}&dstart=${params.startDateFormated || ""}&dend=${params.endDateFormated || ""}`
 			}
 
 			window.onload = function () {
@@ -255,35 +199,6 @@
 					logout()
 				}, false)
 
-				const searchButton = document.getElementById("searchButton");
-				searchButton.addEventListener('click', function (event) {
-					let inputDateStart = document.getElementById("pick-date-start")
-					let dateStart
-					let dateStartUTC
-					if (inputDateStart.value) {
-						dateStart = new Date(inputDateStart.value)
-						dateStartUTC = dateStart.toISOString()
-					}
-
-					let inputDateEnd = document.getElementById("pick-date-end")
-					let dateEnd
-					let dateEndUTC
-					if (inputDateEnd.value) {
-						dateEnd = new Date(inputDateEnd.value)
-						dateEndUTC = dateEnd.toISOString()
-					}
-
-					let titleElement = document.getElementById("titleSearch")
-					let titleValue = titleElement.value
-
-					if (!titleValue && !dateEndUTC && !dateStartUTC) {
-						return
-					} else {
-						searchBlogs(dateStartUTC, dateEndUTC, titleValue)
-					}
-
-				}, false)
-				
 				const nextPageButton = document.getElementById("nextPageButton");
 				if (nextPageButton) {
 					nextPageButton.addEventListener('click', function (event) {
@@ -291,7 +206,6 @@
 					}, false)
 				}
 				
-
 				const previousPageButton = document.getElementById("previousPageButton");
 				if (previousPageButton) {
 					previousPageButton.addEventListener('click', function (event) {

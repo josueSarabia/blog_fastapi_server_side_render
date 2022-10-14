@@ -119,6 +119,8 @@
 </body>
 
 <script src="{{ url_for('static', path='/js/logout.js') }}"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="sweetalert2.all.min.js"></script>
 <script>
 	window.onload = function () {
 		const btnLogout = document.getElementById("logoutbutton");
@@ -298,28 +300,41 @@
 		loadingdeletebutton.classList.add("spinner-border-sm")
 		deleteUserButton.setAttribute("disabled", "")
 
-		fetch("http://localhost:8000/users/" + userId, {
-			method: "delete",
-			body: "",
-		}).then((response) => {
-			deleteUserButton.classList.remove("spinner-border")
-			deleteUserButton.classList.remove("spinner-border-sm")
-			loadingdeletebutton.classList.remove("spinner-border")
-			loadingdeletebutton.classList.remove("spinner-border-sm")
+		Swal.fire({
+			title: 'Eliminar perfil',
+			text: '¿Seguro que desea eliminar su perfil?. Esta acción no es reversible.',
+			icon: 'warning',
+			confirmButtonText: 'Si, Eliminar.',
+			confirmButtonColor: "#dc3545",
+			showCancelButton: true,
+			cancelButtonText: "No, cancelar.",
+			cancelButtonColor: "#3085d6"
+		}).then((responseSwal) => {
+			if (responseSwal.value) {
+				fetch("http://localhost:8000/users/" + userId, {
+					method: "delete",
+					body: "",
+				}).then((response) => {
+					loadingdeletebutton.classList.remove("spinner-border")
+					loadingdeletebutton.classList.remove("spinner-border-sm")
+					deleteUserButton.removeAttribute("disabled");
 
-			deleteUserButton.removeAttribute("disabled");
+					window.location.replace('/login/');
+				}).catch((error) => {
+					loadingdeletebutton.classList.remove("spinner-border")
+					loadingdeletebutton.classList.remove("spinner-border-sm")
+					deleteUserButton.removeAttribute("disabled");
+					errorfetch.classList.remove("d-none")
+				});
+			} else {
+				loadingdeletebutton.classList.remove("spinner-border")
+				loadingdeletebutton.classList.remove("spinner-border-sm")
+				deleteUserButton.removeAttribute("disabled");
+			}
+		})
 
-			window.location.replace('/login/');
-			
-		}).catch((error) => {
-			deleteUserButton.classList.remove("spinner-border")
-			deleteUserButton.classList.remove("spinner-border-sm")
-			loadingdeletebutton.classList.remove("spinner-border")
-			loadingdeletebutton.classList.remove("spinner-border-sm")
 
-			deleteUserButton.removeAttribute("disabled");
-			errorfetch.classList.remove("d-none")
-		});
+		
 	}
 </script>
 </html>

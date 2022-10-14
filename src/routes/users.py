@@ -56,7 +56,6 @@ async def update_user_info(updated_user: User, user: User = Depends(get_current_
     
     return update_user(db, updated_user)
 
-
 @users_router.delete('/users/{user_id}/', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_info(response: Response, user_id: str, user: User = Depends(get_current_user),  db: Session = Depends(get_db)):
     user_db = get_user_by_id(db, user_id)
@@ -65,13 +64,10 @@ async def delete_user_info(response: Response, user_id: str, user: User = Depend
     
     blogs_db = get_user_blogs(db, user.id)
 
-    print(blogs_db)
-    """ for blog in blogs_db:
-        print('deleting', str(blog.blog_id))
-        delete_blog(db, str(blog.blog_id), str(user.id)) """
+    for blog in blogs_db:
+        delete_blog(db, str(blog.blog_id), str(user.id))
     
-    """ print("delete user")
-    delete_user(db, user_id) """
+    delete_user(db, user_id)
 
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")

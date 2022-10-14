@@ -289,13 +289,36 @@ var blogId = ""
 		editCommentButton.setAttribute("disabled", "")
 		deleteCommentButton.setAttribute("disabled", "")
 
-		fetch("http://localhost:8000/comments/"+commentId, {
-			method: "delete",
-		}).then(async (response) => {
-			const commentsList = document.getElementById("commentsCol");
-			const commentElement = document.getElementById(commentId);
-			commentsList.removeChild(commentElement)
+		Swal.fire({
+			title: 'Eliminar comentario',
+			text: '¿Seguro que desea eliminar este comentario?. Esta acción no es reversible.',
+			icon: 'warning',
+			confirmButtonText: 'Si, Eliminar.',
+			confirmButtonColor: "#dc3545",
+			showCancelButton: true,
+			cancelButtonText: "No, cancelar.",
+			cancelButtonColor: "#3085d6"
+		}).then((responseSwal) => {
+			
+			if (responseSwal.value) {
+				fetch("http://localhost:8000/comments/"+commentId, {
+					method: "delete",
+				}).then(async (response) => {
+					const commentsList = document.getElementById("commentsCol");
+					const commentElement = document.getElementById(commentId);
+					commentsList.removeChild(commentElement)
+				})
+			} else {
+				editloadingbutton.classList.remove("spinner-border")
+				editloadingbutton.classList.remove("spinner-border-sm")
+				deleteloadingbutton.classList.remove("spinner-border")
+				deleteloadingbutton.classList.remove("spinner-border-sm")
+				editCommentButton.removeAttribute("disabled")
+				deleteCommentButton.removeAttribute("disabled")
+			}
 		})
+
+		
 
 	}
 

@@ -33,7 +33,7 @@
 			<section class="recent-posts">
 				<div class="section-title">
 					<h2>
-						<span>Mis blogs</span>
+						<span>Mis blogs - {{ data.total }} blogs</span>
 						<button id="createBlogButton" style="margin-left: 5px;" class="btn btn-primary"> crear blog</button>
 					</h2>
 					
@@ -63,7 +63,7 @@
 											<a>{{"autor: " + blog.blog.user.name + " " + blog.blog.user.last_name}}</a>
 										</span>
 										<br/>
-										<span class="post-date">{{blog.blog.updated_at}}</span>
+										<span id="date{{blog.id|safe}}" class="post-date"></span>
 									</span>
 
 									{% if blog.user_id == blog.blog.user_id %}
@@ -83,11 +83,27 @@
 					</div>
 					{% endfor %}
 				</div>
+
+				<div class="row">
+					{% if data.previous.start >= 0 %}
+					<div class="col d-flex justify-content-start">
+						<button id="previousPageButton" class="btn btn-primary"> anterior </button>
+					</div>
+					{% endif %}
+
+					{% if data.next.start < data.total %}
+					<div class="col d-flex justify-content-end">
+						<button id="nextPageButton" class="btn btn-primary"> siguiente </button>
+					</div>
+					{% endif %}
+				</div>
 			</section>
 		</div>
 
 
 		<script src="{{ url_for('static', path='/js/logout.js') }}"></script>
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script src="sweetalert2.all.min.js"></script>
 		<script>
 			function deleteBlog(event) {
 				event.preventDefault()
@@ -113,25 +129,70 @@
 				
 				targetBlog.setAttribute("disabled", "")
 				
-				
-				
-				fetch("http://localhost:8000/blogs/"+blogId+"/", {
-					method: "delete",
-				}).then((response) => {
-					deleteloadingbutton.classList.remove("spinner-border")
-					deleteloadingbutton.classList.remove("spinner-border-sm")
-					if (updateBlogbutton && updateloadingbutton) {
-						updateloadingbutton.classList.remove("spinner-border")
-						updateloadingbutton.classList.remove("spinner-border-sm")
-						updateBlogbutton.removeAttribute("disabled")
-					}
+				Swal.fire({
+					title: 'Eliminar blog',
+					text: '¿Seguro que desea eliminar este blog?. Esta acción no es reversible.',
+					icon: 'warning',
+					confirmButtonText: 'Si, Eliminar.',
+					confirmButtonColor: "#dc3545",
+					showCancelButton: true,
+					cancelButtonText: "No, cancelar.",
+					cancelButtonColor: "#3085d6"
+				}).then((responseSwal) => {
+			
+					if (responseSwal.value) {
+						fetch("http://localhost:8000/blogs/"+blogId+"/", {
+								method: "delete",
+							}).then((response) => {
+								deleteloadingbutton.classList.remove("spinner-border")
+								deleteloadingbutton.classList.remove("spinner-border-sm")
+								if (updateBlogbutton && updateloadingbutton) {
+									updateloadingbutton.classList.remove("spinner-border")
+									updateloadingbutton.classList.remove("spinner-border-sm")
+									updateBlogbutton.removeAttribute("disabled")
+								}
 
-					targetBlog.removeAttribute("disabled")					
+								targetBlog.removeAttribute("disabled")					
 
-					if (response.status == 204) {
-						window.location.reload();
+								if (response.status == 204) {
+									window.location.reload();
+								}
+							});
+					} else {
+						deleteloadingbutton.classList.remove("spinner-border")
+						deleteloadingbutton.classList.remove("spinner-border-sm")
+						if (updateBlogbutton && updateloadingbutton) {
+							updateloadingbutton.classList.remove("spinner-border")
+							updateloadingbutton.classList.remove("spinner-border-sm")
+							updateBlogbutton.removeAttribute("disabled")
+						}
+
+						targetBlog.removeAttribute("disabled")
 					}
-				});
+				})
+				
+			}
+
+			function getDate(date) {
+				let dateObject = new Date(date)
+				let humanRedableDate = dateObject.getDate() +"-"+ (dateObject.getMonth()+1) +"-"+ dateObject.getFullYear()
+				let timezoneInHours = dateObject.getTimezoneOffset() / 60
+				let humanRedableHours = Math.abs(dateObject.getHours() - timezoneInHours) +":"+( dateObject.getMinutes() < 10 ? "0" : "" ) + dateObject.getMinutes()
+				let fullDate = humanRedableDate + " " + humanRedableHours
+
+				return fullDate
+			}
+
+			function nextPage() {
+				start = '{{data.next.start|safe}}'
+				limit = '{{data.next.limit|safe}}'
+				window.location.href = `http://localhost:8000/user/blogs/?start=${start}&limit=${limit}`
+			}
+
+			function previousPage() {
+				start = '{{data.previous.start|safe}}'
+				limit = '{{data.previous.limit|safe}}'
+				window.location.href = `http://localhost:8000/user/blogs/?start=${start}&limit=${limit}`
 			}
 
 			function addEventListeners() {
@@ -141,6 +202,9 @@
 					deleteBlogButton.addEventListener('click', function (event) {
 						deleteBlog(event)
 					}, false)
+
+					const dateLabel = document.getElementById('date' + blog.id);
+					dateLabel.innerText = getDate(blog.blog.updated_at)
 
 					if (blog.user_id == blog.blog.user_id) {
 						const updateBlogButton = document.getElementById('updateBlog' + blog.blog_id);
@@ -164,6 +228,20 @@
 				createBlogButton.addEventListener('click', function (event) {
 					window.location.href = "/create-blog/"
 				}, false)
+
+				const nextPageButton = document.getElementById("nextPageButton");
+				if (nextPageButton) {
+					nextPageButton.addEventListener('click', function (event) {
+						nextPage()
+					}, false)
+				}
+
+				const previousPageButton = document.getElementById("previousPageButton");
+				if (previousPageButton) {
+					previousPageButton.addEventListener('click', function (event) {
+						previousPage()
+					}, false)
+				}
 
 				addEventListeners()
 			}

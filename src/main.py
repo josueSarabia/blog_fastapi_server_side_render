@@ -28,4 +28,7 @@ def login_page(access_token: str | None = Cookie(default=None)):
 
 @app.exception_handler(RequiresLoginException)
 async def exception_handler(request: Request, exc: RequiresLoginException):
-    return RedirectResponse(url='/login/')
+    response = RedirectResponse(url='/login/')
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+    return response

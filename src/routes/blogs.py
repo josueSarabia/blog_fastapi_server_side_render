@@ -5,44 +5,18 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from database.database import SessionLocal
 from models.blog import Blog, BlogCreate, BlogUpdate
-from database.querys.blog import create_blog, delete_blog, get_all_blogs, get_blog, get_blog_relation, get_user_blogs, share_blog, update_blog
+from database.querys.blog import create_blog, delete_blog, get_all_blogs, get_blog, get_blog_relation, get_user_blogs, search_blogs, share_blog, update_blog
 from database.utils.utils_db import get_db
 from middlewares.auth import  get_current_user
+from models.exception import ComplexEncoder
 from models.user import User
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from models.userblog import UserBlog
+from utils.blog_utils import format_db_blogs
 
 templates = Jinja2Templates(directory="templates")
 blogs_router = APIRouter()
 
-
-class ComplexEncoder(json.JSONEncoder):
-    def default(self, obj):
-        
-        if hasattr(obj, 'reprJSON'):
-            return obj.reprJSON() 
-        elif type(obj).__name__ == 'UUID':
-            return str(obj)
-        elif type(obj).__name__ == 'datetime':
-            return str(obj)
-        else:
-            return json.JSONEncoder.default(self, obj)
-
-def format_db_blogs(blogs_db):
-    blogs = []
-
-    for blog in blogs_db:
-
-        blog.blog_id = str(blog.blog_id)
-        blog.user_id = str(blog.user_id)
-        blog.id = str(blog.id)
-        user_model = User(**blog.user.as_dict()).__dict__
-        blog_model = Blog(**blog.blog.as_dict(), user=blog.blog.user.as_dict()).__dict__
-        user_blog_model = UserBlog(blog_id=blog.blog_id, user_id=blog.user_id, id=blog.id, user=user_model, blog=blog_model)
-        user_blog_json = json.dumps(user_blog_model.reprJSON(), cls=ComplexEncoder)
-        blogs.append(json.loads(user_blog_json))
-    return blogs
 
 @blogs_router.get("/create-blog/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def get_create_blog_form(request: Request, user: User = Depends(get_current_user)):
@@ -60,11 +34,27 @@ def create_blog_for_a_user(blog: BlogCreate, db: Session = Depends(get_db), user
     return new_blog
 
 @blogs_router.get("/user/blogs/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def get_user_all_blogs(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    blogs_db = get_user_blogs(db, user.id)
+def get_user_all_blogs(request: Request, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    results = get_user_blogs(db, user.id, start, limit)
+    blogs_db = results["results"]
+    total = results["total"]
     blogs = format_db_blogs(blogs_db)
 
-    return templates.TemplateResponse("userBlogs.html", {"request": request, "data": {"blogs": blogs }})
+    return templates.TemplateResponse("userBlogs.html", {
+        "request": request,
+        "data": {
+            "blogs": blogs,
+            "next": {
+                "start": start + limit,
+                "limit": limit 
+            },
+            "previous": {
+                "start": -1 if start - limit < 0  else start - limit,
+                "limit": limit 
+            },
+            "total": total
+        }
+    })
 
 @blogs_router.get("/update-blog/{blog_id}/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def get_update_blog_form(blog_id: str, request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -114,10 +104,63 @@ def delete_user_blog(blog_id: str,  db: Session = Depends(get_db), user: User = 
     return
 
 @blogs_router.get("/blogs/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def get_all_blogs_of_the_app(request: Request,  db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    blogs_db = get_all_blogs(db)
+def get_all_blogs_of_the_app(request: Request, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    results = get_all_blogs(db, start, limit)
+    blogs_db = results["results"]
+    total = results["total"]
     blogs = format_db_blogs(blogs_db)
-    return templates.TemplateResponse("blogs.html", {"request": request, "data": {"blogs": blogs }})
+    return templates.TemplateResponse("blogs.html", {
+        "request": request,
+        "data": {
+            "blogs": blogs,
+            "next": {
+                "start": start + limit,
+                "limit": limit 
+            },
+            "previous": {
+                "start": -1 if start - limit < 0  else start - limit,
+                "limit": limit 
+            },
+            "total": total
+        }
+    })
+
+@blogs_router.get("/blogs/search/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
+def get_user_all_blogs(request: Request, title: str, dstart: str, dend: str, start: int = 0, limit: int = 6, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    results = search_blogs(db,  title, dstart, dend, start, limit)
+    blogs_db = results["results"]
+    total = results["total"]
+    # blogs = format_db_blogs(blogs_db)
+
+    blogs = []
+    for blog in blogs_db:
+        blog.id = str(blog.id)
+        blog.user_id = str(blog.user_id)
+        blog.user.id = str(blog.user.id)
+        user = User(**blog.user.as_dict()).__dict__
+        blog_format = Blog(**blog.as_dict(), user=user)
+        blog_format.content = ""
+        blog_json = json.dumps(blog_format.reprJSON(), cls=ComplexEncoder)
+
+        blogs.append(json.loads(blog_json))
+    
+    return templates.TemplateResponse("search.html", {
+        "request": request,
+        "data": {
+            "blogs": blogs,
+            "next": {
+                "start": start + limit,
+                "limit": limit 
+            },
+            "previous": {
+                "start": -1 if start - limit < 0  else start - limit,
+                "limit": limit 
+            },
+            "total": total
+        }
+    })
+
+
 
 @blogs_router.post("/blogs/share/", status_code=status.HTTP_201_CREATED, response_model=Blog)
 async def user_share_a_blog(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
