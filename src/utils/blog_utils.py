@@ -6,6 +6,15 @@ from models.userblog import UserBlog
 
 
 def format_db_blogs(blogs_db):
+    """ format user-blog relationships to a json
+
+    Args:
+        blogs_db (list[UserBlog]): list of UserBlog relationships
+    
+    Returns:
+        list: list of UserBlog json
+
+    """
     blogs = []
 
     for blog in blogs_db:

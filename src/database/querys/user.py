@@ -6,6 +6,15 @@ from database.models.user import User as UserModel
 
 
 def create_user(db: Session, user: UserCreate):
+    """ Create a user on the database
+
+    Args:
+        db (Session): database session
+        user (UserCreate): information of the user
+
+    Returns:
+        user: the created user in the database
+    """
     user.password = get_hashed_password(user.password)
     db_user = UserModel(**user.dict())
     db.add(db_user)
@@ -15,10 +24,28 @@ def create_user(db: Session, user: UserCreate):
     return db_user
 
 def get_user_by_id(db: Session, user_id: str):
+    """ Get a user by his id
+
+    Args:
+        db (Session): database session
+        user_id (str): id of the user
+
+    Returns:
+        user: the user with the specified id
+    """
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     return user
 
 def get_user_by_email(db: Session, user_email: str):
+    """ Get a user by his email
+
+    Args:
+        db (Session): database session
+        user_email (str): email of the user
+
+    Returns:
+        user: the user with the specified email
+    """
     if user_email is None:
         raise HTTPException(
             status_code = status.HTTP_400_BAD_REQUEST,
@@ -29,6 +56,15 @@ def get_user_by_email(db: Session, user_email: str):
     return user
 
 def update_user(db: Session, user: UserSchema):
+    """ Update the user information
+
+    Args:
+        db (Session): database session
+        user (UserSchema): updated user info
+
+    Returns:
+        user: the user with the updated info
+    """
     missing_fields = "Missing values: "
     error = False
     if user.name is None:
@@ -70,6 +106,13 @@ def update_user(db: Session, user: UserSchema):
     return user
 
 def delete_user(db: Session, user_id: str):
+    """ Delete the user from the database and all his blogs
+
+    Args:
+        db (Session): database session
+        user_id (str): id of the user
+
+    """
     db.query(UserModel).filter(UserModel.id == user_id).delete()
     db.commit()
 

@@ -22,13 +22,17 @@ reuseable_oauth = OAuth2PasswordBearer(
 
 #this is a param -> token: str = Depends(reuseable_oauth))
 async def get_current_user(access_token: str | None = Cookie(default=None), db: Session = Depends(get_db) ): 
+    """ Validates user access token
+
+    Args:
+        access_token (str): user access token
+        db (Session): session of the database
+
+    Returns:
+        user: the user who is making the request
+    """
     try:
         if access_token is None:
-            """ raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Could not validate credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            ) """
             raise RequiresLoginException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Could not validate credentials",
@@ -38,22 +42,12 @@ async def get_current_user(access_token: str | None = Cookie(default=None), db: 
             access_token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
         )
         if datetime.fromtimestamp(token_data.get("exp")) < datetime.now():
-            """ raise HTTPException(
-                status_code = status.HTTP_401_UNAUTHORIZED,
-                detail="Token expired",
-                headers={"WWW-Authenticate": "Bearer"},
-            ) """
             raise RequiresLoginException(
                 status_code = status.HTTP_401_UNAUTHORIZED,
                 detail="Token expired",
                 headers={"WWW-Authenticate": "Bearer"},
             )
     except(jwt.JWTError, ValidationError):
-        """ raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) """
         raise RequiresLoginException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",

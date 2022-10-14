@@ -8,6 +8,19 @@ from database.database import Base
 class Comment(Base):
     __tablename__ = "comments"
 
+    """
+    Class that represents a Comment in the database
+
+    Args:
+        id (UUID): id of the Comment
+        content (str): content of the Comment
+        blog_id (UUID): the blog where the Comment exist
+        user_id (UUID): user who created the Comment
+        created_at (datetime): when was the Comment created
+        updated_at (datetime): when was the Comment updated
+        user (User): information of the user who created the Comment
+    """
+
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
     content = Column(String, nullable=False)
     blog_id = Column(String, nullable=False)
