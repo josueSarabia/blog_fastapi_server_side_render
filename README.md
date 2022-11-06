@@ -1,4 +1,4 @@
-# proyecto_final
+# blog_fastapi_server_side_render
 
 Blog es un server side rendered website  que tiene una sección de usuarios (la función de búsqueda, buscar por título las publicaciones y fecha), repostear, autenticación, publicaciones que pueden recibir comentarios.
 
